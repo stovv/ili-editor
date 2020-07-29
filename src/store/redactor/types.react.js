@@ -3,4 +3,12 @@ export const DRAFT = {
     OPEN: "OPEN_DRAFT",
     UPDATE: "UPDATE_DRAFT",
     CLOSE: "CLOSE_DRAFT"
+};
+
+export const MODERATION = {
+  GET: "GET_MODERATION"
+};
+
+export const POSTS = {
+    GET_MY: "GET_PUBLISHED_POSTS"
 }

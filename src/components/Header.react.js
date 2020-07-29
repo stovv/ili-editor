@@ -21,9 +21,10 @@ class Header extends React.Component {
         const { userId } = this.props;
         Auth.me(userId)
             .then(response => {
-                console.log(response.data);
-                this.setState({ user: response.data});
-            });
+                console.log(response);
+                this.setState({ user: response.data.user});
+            })
+            .catch(res => console.log(res));
     }
 
     render(){

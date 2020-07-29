@@ -9,7 +9,20 @@ export async function login(user, password){
 
 export async function me(user_id){
     const jwt = getJwt();
-    return api.get(`/users/${user_id}`,{
+
+    return api.ql(`
+    query{
+      user( id: ${user_id} ){
+        id,
+        name,
+        secondName,
+        avatar{
+          formats
+        }
+      }
+    }
+    `, null,
+    {
         headers: { 'Authorization': `Bearer ${jwt}`}
     });
 }

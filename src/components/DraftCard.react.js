@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 
 import { Flex, Box } from 'rebass';
 import { connect } from "react-redux";
-import { withTheme } from 'styled-components';
+import styled, { withTheme } from 'styled-components';
 
 import { Lazy } from "./Images";
 import { Small, XSmall } from './Typography.react';
@@ -14,6 +14,13 @@ import { EmptyCover } from "../constants";
 //import {createNewDraft, openDraft} from "../../store/smisolActions.react";
 //import toaster from "toasted-notes";
 //import { Toasts } from "../index";
+
+
+const Tag = styled.div`
+    background-color: ${props => props.color};
+    padding: 5px 10px;
+    border-radius: 16px;
+`;
 
 
 class DraftCard extends React.Component {
@@ -42,25 +49,29 @@ class DraftCard extends React.Component {
     }
 
     render() {
-        const { theme } = this.props;
-        const { id, cover, title, rubric, updated_at } = this.props.draft;
+        const { theme, linkPrefix } = this.props;
+        const { id, cover, title, rubric, updated_at, state } = this.props.draft;
+
+        //state === "moderation"
 
         return (
-            <Link to={`/edit/${id}`}>
                 <Flex flexDirection={'column'} onClick={this.handleNewDraft}
                       height="100%" width="100%" maxWidth={["350px"]} mx="auto"
-                      sx={{borderRadius: "6px", overflow: "hidden", cursor: "pointer",
-                          transition: "all .3s ease-out",
+                      sx={{borderRadius: "15px", overflow: "hidden", cursor: "pointer",
                           boxShadow: "0px 0px 10px -5px rgba(0, 0, 0, 0.7)",
+                          transition: "all 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) 0s",
                           "&:hover": {
                               boxShadow: "0px 10px 30px -5px rgba(0, 0, 0, 0.7)",
                               transform: "translateY(-3px)"
                           }
                       }}>
                     <Box height={"70%"}>
-                        <Lazy cover={cover || EmptyCover}/>
+                        <Link to={`${linkPrefix}${id}`}>
+                            <Lazy cover={cover || EmptyCover}/>
+                        </Link>
                     </Box>
                     <Box height={"30%"} bg={theme.colors.backgroundPrimary} p={"10px"}>
+                        <Link to={`${linkPrefix}${id}`}>
                         {
                             rubric &&
                             <XSmall weight={500} color={theme.text.hover} textTransform="lowercase"
@@ -81,10 +92,19 @@ class DraftCard extends React.Component {
                             <XSmall color={theme.text.editorSecondary} margin={0}>
                                 <Moment fromNow locale="ru">{updated_at}</Moment>
                             </XSmall>
+                            {
+                                state === 'moderation' &&
+                                <Tag color={theme.colors.yellow}>
+                                    <XSmall color={theme.text.onPrimary} margin={0}>
+                                        На модерации
+                                    </XSmall>
+                                </Tag>
+                            }
                         </Flex>
+                        </Link>
                     </Box>
                 </Flex>
-            </Link>
+
         );
     }
 }
@@ -101,6 +121,7 @@ class DraftCard extends React.Component {
 // </Box>
 
 DraftCard.propTypes = {
+    linkPrefix: PropTypes.string.isRequired,
     draft: PropTypes.object.isRequired,
 }
 

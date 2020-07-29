@@ -24,6 +24,7 @@ export const XXLarge = styled.p`
   font-style: normal;
   line-height: 1.04;
   letter-spacing: normal;
+  white-space: ${props => props.oneLine ? "nowrap": "unset"};
   ${({hover, theme}) => hover && `
       :hover{
           transition: all 0.4s ease-in-out;
@@ -59,6 +60,7 @@ export const XLarge = styled.p`
   font-style: normal;
   line-height: 1.04;
   letter-spacing: normal;
+  white-space: ${props => props.oneLine ? "nowrap": "unset"};
   ${({hover, theme}) => hover && `
       :hover{
           transition: all 0.4s ease-in-out;
@@ -94,6 +96,7 @@ export const Large = styled.p`
   font-style: normal;
   line-height: 1.04;
   letter-spacing: normal;
+  white-space: ${props => props.oneLine ? "nowrap": "unset"};
   ${({hideOwerflow, maxLines}) => hideOwerflow && `
       text-overflow: ellipsis;
       display: -webkit-box;
@@ -137,6 +140,7 @@ export const Normal = styled.p`
   font-style: normal;
   line-height: 1.33;
   letter-spacing: normal;
+  white-space: ${props => props.oneLine ? "nowrap": "unset"};
   ${({hideOwerflow, maxLines}) => hideOwerflow && `
       text-overflow: ellipsis;
       display: -webkit-box;
@@ -180,6 +184,7 @@ export const Small = styled.p`
   font-style: normal;
   line-height: 1.09;
   letter-spacing: normal;
+  white-space: ${props => props.oneLine ? "nowrap": "unset"};
   ${({hideOwerflow, maxLines}) => hideOwerflow && `
       text-overflow: ellipsis;
       display: -webkit-box;
@@ -223,6 +228,7 @@ export const XSmall = styled.p`
   font-style: normal;
   line-height: 1.29;
   letter-spacing: normal;
+  white-space: ${props => props.oneLine ? "nowrap": "unset"};
   ${({hideOwerflow, maxLines}) => hideOwerflow && `
       text-overflow: ellipsis;
       display: -webkit-box;
@@ -254,6 +260,7 @@ const defProps = {
   breakWord: PropTypes.bool,
   hover: PropTypes.bool,
   weight: PropTypes.number,
+  oneLine: PropTypes.bool,
   width: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.number

@@ -24,6 +24,7 @@ function AuthReducer(state = initialState, action){
                 ...state,
                 isLoggedIn: true,
                 jwt: action.payload.jwt,
+                userType: action.payload.user.role.id,
                 userId: action.payload.user.id
             };
         }

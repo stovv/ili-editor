@@ -5,7 +5,7 @@ import { Redactor } from '../actions';
 import { Views } from '../components';
 
 
-class DraftsPage extends React.Component{
+class PublicationsPage extends React.Component{
 
     constructor(props) {
         super(props);
@@ -13,14 +13,14 @@ class DraftsPage extends React.Component{
 
     componentDidMount() {
         const { userId, dispatch } = this.props;
-        dispatch(Redactor.getDrafts());
+        dispatch(Redactor.getPublishedPosts(userId, 0, 10));
     }
 
     render(){
-        const { drafts } = this.props;
+        const { theme, published } = this.props;
 
         return (
-            <Views.CardsView prefix="/edit/draft/" drafts={drafts} emptyMessage={'Пока нет ниодного черновика'}/>
+            <Views.CardsView prefix="https://dev.ili-nnov.ru/post/" drafts={published} emptyMessage={'Пока нет ни одной публикации'}/>
         );
     }
 }
@@ -28,8 +28,8 @@ class DraftsPage extends React.Component{
 function mapStateToProps(state) {
     return {
         userId: state.auth.userId,
-        drafts: state.redactor.drafts
+        published: state.redactor.published
     }
 }
 
-export default connect(mapStateToProps)(DraftsPage);
+export default connect(mapStateToProps)(PublicationsPage);

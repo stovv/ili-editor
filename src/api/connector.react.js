@@ -8,12 +8,13 @@ const base_api = axios.create({
 });
 
 const api = {
-    ql: (query, additional_data = null) => {
+    ql: (query, additional_data = null, config = null) => {
         return base_api.post('/graphql', {
                 ...additional_data,
                 query: query,
             },
             {
+                ...config,
                 transformResponse: [function (data) {
                     return JSON.parse(data).data;
                 }]

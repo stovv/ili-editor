@@ -5,6 +5,9 @@ const light = {
         backgroundPrimary: '#ffffff',
         backgroundInvert: '#4a4a4a',
         backgroundInverted: '#0e0e0e',
+        orange: "#e76f51",
+        green: "#2a9d8f",
+        yellow: "#ff9234",
         hover: "#050505",
     },
     text: {

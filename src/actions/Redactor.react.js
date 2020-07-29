@@ -1,10 +1,24 @@
-import { DRAFT } from '../store/redactor/types.react';
+import { DRAFT, MODERATION, POSTS } from '../store/redactor/types.react';
 import { Redactor, Auth, Public } from '../api';
 
 
 const getDraftAction = (data) => {
     return {
         type: DRAFT.GET,
+        payload: data
+    };
+};
+
+const getModerationAction = (data) => {
+    return {
+        type: MODERATION.GET,
+        payload: data
+    };
+};
+
+const getPublishedAction = (data) => {
+    return {
+        type: POSTS.GET_MY,
         payload: data
     };
 };
@@ -29,21 +43,46 @@ const closeDraftAction = {
 };
 
 
-export function getDrafts(user_id){
+export function getDrafts(){
     return async dispatch => {
-        await Auth.me(user_id)
+        await Redactor.getDrafts()
             .then(response=>{
-                dispatch(getDraftAction(response.data.drafts));
+                dispatch(getDraftAction(response.data));
             })
             .catch(reason=>{
                 console.log(reason);
             })
     };
-};
+}
+
+export function getDraftsOnModeration(start, limit){
+    return async dispatch => {
+        await Redactor.getModerationDrafts()
+            .then(response=>{
+                console.log(response.data);
+                dispatch(getModerationAction(response.data));
+            })
+            .catch(reason=>{
+                console.log(reason);
+            })
+    };
+}
+
+export function getPublishedPosts(user_id, start, limit){
+    return async dispatch => {
+        await Redactor.getMyPosts(user_id, start, limit)
+            .then(response=>{
+                dispatch(getPublishedAction(response.data.posts));
+            })
+            .catch(reason=>{
+                console.log(reason);
+            })
+    };
+}
 
 export function createNewDraft(){
     return async dispatch => {
-        await Redactor.create_draft()
+        await Redactor.createDraft()
             .then(response=>{
                 dispatch(openDraftAction(response.data));
             });
@@ -52,7 +91,7 @@ export function createNewDraft(){
 
 export function openDraft(draftId){
     return async dispatch => {
-        await Redactor.get_draft(draftId)
+        await Redactor.getDraft(draftId)
             .then(response=>{
                 dispatch(openDraftAction(response.data));
             });
@@ -62,7 +101,7 @@ export function openDraft(draftId){
 
 export function updateDraft(draftId, data){
     return async dispatch => {
-        await Redactor.update_draft(draftId, data)
+        await Redactor.updateDraft(draftId, data)
             .then(response=>{
                 dispatch(updateDraftAction(response.data));
             });
@@ -71,9 +110,9 @@ export function updateDraft(draftId, data){
 
 export function draftToPost(postId, draftId, data){
     return async dispatch => {
-        await Redactor.update_post(postId, data)
+        await Redactor.updatePost(postId, data)
             .then(response=>{
-                Redactor.remove_draft(draftId)
+                Redactor.removeDraft(draftId)
                     .then(response=>{
                         window.location.href=`/post/${postId}`;
                         dispatch(closeDraftAction);
@@ -88,7 +127,7 @@ export function postToDraft(post_id){
         await Public.getPost(post_id)
             .then(async post_response=>{
                 console.log("POST RESP", post_response);
-                await Redactor.create_draft()
+                await Redactor.createDraft()
                     .then(async draft_response=>{
                         console.log("DRAFT RESP", draft_response);
                         let draft_data = {
@@ -103,7 +142,7 @@ export function postToDraft(post_id){
                             exists_post_id: post_id
                         };
                         console.log("NEW DRAFT DATA", draft_data);
-                        await Redactor.update_draft(draft_response.data.id, draft_data)
+                        await Redactor.updateDraft(draft_response.data.id, draft_data)
                             .then(response=>{
                                 dispatch(openDraftAction(response.data));
                             })

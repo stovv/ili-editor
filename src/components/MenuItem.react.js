@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Flex, Box } from 'rebass';
 import { Link } from 'react-router-dom';
+import { IconContext } from "react-icons";
 import styled, { withTheme } from "styled-components";
 
 import { Small } from './Typography.react';
@@ -28,10 +29,14 @@ const MenuItem = ({ active, theme, icon, title, to, onClick }) =>{
                      }
                  }} height={"56px"}>
                 {active && <ActiveBar/>}
-                <Flex justifyContent={icon !== undefined ? "space-between" : "center"} my={"auto"} height={"100%"}>
+                <Flex justifyContent={icon !== undefined ? undefined : "center"} my={"auto"} height={"100%"}>
                     {
                         icon !== undefined &&
-                            <Icon/>
+                        <IconContext.Provider value={{ color: "white", size: "25px" }}>
+                            <Box my={'auto'} mx={"20px"}>
+                                <Icon/>
+                            </Box>
+                        </IconContext.Provider>
                     }
                     <Small margin="auto 0" textAlign={"center"} weight={500} color={theme.text.onPrimary}>{title}</Small>
                 </Flex>

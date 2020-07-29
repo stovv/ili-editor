@@ -1,15 +1,40 @@
+import { FiItalic, FiEdit3, FiPenTool } from "react-icons/fi";
+
+import {DraftsPage, LoginPage, ModeratePage, PublicationsPage} from './pages';
+
 export const BACKEND_URL = process.env.SITE_ROOT ||  'https://xpan.ili-nnov.ru';
 export const SITE_URL = process.env.SITE_ROOT || 'http://localhost:3000';
 
-export const Mapping = {
+export let Mapping = {
     '/': {
-        title: 'Moи черновики'
+        title: 'Moи черновики',
+        contentType: 'menuItems',
+        authRequired: true,
+        icon: FiPenTool,
+        page: DraftsPage
     },
-    '/moderate': {
-        title: 'В редактуре',
-        userType: 5
+    '/published': {
+        title: 'Мои публикации',
+        contentType: 'menuItems',
+        authRequired: true,
+        icon: FiEdit3,
+        page: PublicationsPage
+    },
+    '/moderation': {
+        title: 'Редактура',
+        contentType: 'menuItems',
+        userType: 3,
+        icon: FiItalic,
+        authRequired: true,
+        page: ModeratePage
+    },
+    '/login':{
+        title: 'Вход',
+        exclude: true,
+        page: LoginPage
     }
-}
+};
+
 
 
 export const EmptyCover = {

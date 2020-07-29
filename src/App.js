@@ -1,4 +1,5 @@
 import React from 'react';
+import {connect} from "react-redux";
 import {BrowserRouter as Router,
     Switch,
     Route
@@ -7,34 +8,43 @@ import {
     PrivateRoute,
     SideContainer
 } from "./components";
+
 import {
-    LoginPage,
     EditPage,
-    DraftsPage,
-    ModeratePage
+    NotFoundPage
 } from './pages';
+
 import { Mapping } from './constants';
 import IliThemeProvider from "./theme";
 
 import 'moment/locale/ru';
 import './App.css';
-import 'antd/dist/antd.css';
 
 
 class App extends React.Component {
 
   render() {
+    const { userType } = this.props;
+
     return (
         <IliThemeProvider>
             <Router>
-                <SideContainer mapping={Mapping} exclude={['/login']}>
+                <SideContainer mapping={Mapping}>
                     <Switch>
-                        <Route exact path="/login" >
-                            <LoginPage/>
-                        </Route>
-                        <PrivateRoute exact path="/" component={DraftsPage}/>
-                        <PrivateRoute exact path="/edit/:id" component={EditPage}/>
-                        <PrivateRoute exact path="/moderate" component={ModeratePage}/>
+                        {
+                            Object.keys(Mapping).map((key, index) => {
+                                if ( Mapping[key].userType !== undefined && userType !== Mapping[key].userType ){
+                                    return <Route exact path={key} component={NotFoundPage}/>
+                                }
+                                if ( Mapping[key].authRequired ){
+                                    return <PrivateRoute exact path={key} component={Mapping[key].page}/>
+                                } else{
+                                    return <Route exact path={key} component={Mapping[key].page}/>;
+                                }
+                            })
+                        }
+                        <PrivateRoute exact path={'/edit/draft/:id'} component={EditPage}/>
+                        <Route component={NotFoundPage}/>
                     </Switch>
                 </SideContainer>
             </Router>
@@ -43,4 +53,10 @@ class App extends React.Component {
   }
 }
 
-export default App;
+function mapStateToProps(state){
+    return {
+        userType: state.auth.userType
+    }
+}
+
+export default connect(mapStateToProps)(App);

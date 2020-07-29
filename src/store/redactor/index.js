@@ -1,8 +1,10 @@
-import {DRAFT} from "./types.react";
+import { DRAFT, MODERATION, POSTS } from "./types.react";
 
 let initialState = {
     draft: null,
-    drafts: []
+    drafts: [],
+    moderation: [],
+    published: []
 }
 
 function RedactorReducer(state = initialState, action){
@@ -13,6 +15,19 @@ function RedactorReducer(state = initialState, action){
                 draft: null,
                 drafts: action.payload
             };
+        }
+        case MODERATION.GET:{
+            return {
+                ...state,
+                draft: null,
+                moderation: action.payload
+            };
+        }
+        case POSTS.GET_MY:{
+          return  {
+              ...state,
+              published: action.payload
+          };
         }
         case DRAFT.OPEN:{
             return {
@@ -29,12 +44,6 @@ function RedactorReducer(state = initialState, action){
                 }
             };
         }
-        // case SMISOL.COVER.SET_TEMP:{
-        //     return {
-        //         ...state,
-        //         temp_cover: action.payload
-        //     };
-        // }
         case DRAFT.CLOSE:{
             return {
                 ...state,
