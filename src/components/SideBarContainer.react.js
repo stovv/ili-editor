@@ -4,14 +4,14 @@ import { Flex, Box } from 'rebass';
 import { withRouter } from "react-router-dom";
 import styled, { withTheme } from "styled-components";
 
-import Header from './Header.react';
+import Header from './Headers/Simple.react';
 import { Logo } from '../assets';
 import { Small } from './Typography.react';
 import { Separator } from "./Common.react";
 import SimpleMenu from "./MenuContent/SimpleMenu.react";
 
 
-const RedactorLogo=({theme})=>(
+const SidebarLogo=({theme})=>(
     <Flex justifyContent="center" my={"30px"}>
         <Box my={"auto"} width={"40px"} height={"40px"}>
             <Logo width="100%" primary={theme.colors.primary}
@@ -78,9 +78,11 @@ class SideContainer extends React.Component {
                         position: window.innerWidth > 1080 ? "sticky" : "fixed", top: 0,
                         left: window.innerWidth > 1080 ? 0 : (opened ? 0 : "-260px"),
                         transition: "left .2s ease",
-                        boxShadow: window.innerWidth > 1080 ? "unset" : "52px -6px 59px -51px rgba(0,0,0,0.55)"
+                        boxShadow: window.innerWidth > 1080
+                            ? "unset"
+                            : (opened ? "52px -6px 59px -51px rgba(0,0,0,0.55)" : "none")
                     }}>
-                        <RedactorLogo theme={theme}/>
+                        <SidebarLogo theme={theme}/>
                         <Box mt={"50px"}/>
                         <SideComponent mapping={mapping}/>
                     </Box>

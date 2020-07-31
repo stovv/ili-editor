@@ -1,17 +1,15 @@
 import React from 'react';
 import Typist from "react-typist";
 import { Flex, Box } from 'rebass';
+import {connect} from "react-redux";
 import { Input } from '@rebass/forms';
-import { Redirect } from 'react-router-dom';
+import {withTheme} from "styled-components";
+import { withRouter } from 'react-router-dom';
 
 import { Public } from '../api';
 import { Logo } from '../assets';
-import { Typography, Forms } from "../components";
-import {withTheme} from "styled-components";
-import {connect} from "react-redux";
 import { Auth } from '../actions';
-//import { lightTheme as theme } from '../theme/theme';
-
+import { Typography, Forms } from "../components";
 
 
 class LoginPage extends React.Component {
@@ -40,7 +38,7 @@ class LoginPage extends React.Component {
 
     login(){
         const { login, password, localAuth } = this.state;
-        const { dispatch } = this.props;
+        const { dispatch, history } = this.props;
 
         if ( !localAuth ){
             this.setState({ localAuth: true})
@@ -59,12 +57,13 @@ class LoginPage extends React.Component {
         this.setState({ loading: true })
         dispatch(Auth.loginAction({login, password}))
             .then((data)=>{
-                this.setState({ loading: false, local: true})
                 if (!this.props.logged){
-                    this.setState({ loading: false, error: "неправильный логин или пароль" })
+                    this.setState({ loading: false, error: "неправильный логин или пароль" });
+                }else{
+                    //this.setState({ loading: false, localAuth: true});
+                    history.push('/');
                 }
             })
-
     }
 
     logout(){
@@ -78,10 +77,6 @@ class LoginPage extends React.Component {
     render(){
         const { theme, logged } = this.props;
         const { cover, error, loading, localAuth } = this.state;
-
-        if ( logged && localAuth ){
-            return (<Redirect to="/"/>);
-        }
 
         return(
             <Box height="100vh" bg={theme.colors.backgroundInvert}>
@@ -191,4 +186,4 @@ function mapStateToProps(state) {
     }
 }
 
-export default connect(mapStateToProps)(withTheme(LoginPage));
+export default connect(mapStateToProps)(withTheme(withRouter(LoginPage)));

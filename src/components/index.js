@@ -1,5 +1,5 @@
 import PrivateRoute from "./PrivateRoute.react";
-import Header from "./Header.react";
+import Header from "./Headers/Simple.react";
 import DraftCard from "./DraftCard.react";
 import Loader from './Loader.react';
 import SideContainer from "./SideBarContainer.react";
@@ -10,6 +10,8 @@ import * as Common from './Common.react';
 import * as Images from './Images';
 import * as Views from './Views';
 import * as MenuContents from './MenuContent';
+import * as Headers from './Headers';
+import * as Buttons from './Buttons';
 
 export {
     PrivateRoute,
@@ -21,6 +23,8 @@ export {
     DraftCard,
     Loader,
     Views,
+    Headers,
+    Buttons,
     SideContainer,
     MenuContents
 }

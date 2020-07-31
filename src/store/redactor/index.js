@@ -1,10 +1,13 @@
-import { DRAFT, MODERATION, POSTS } from "./types.react";
+import {DRAFT, MODERATION, POSTS, STATE} from "./types.react";
 
 let initialState = {
-    draft: null,
+    draft: {},
     drafts: [],
     moderation: [],
-    published: []
+    published: [],
+    posts: [],
+    editorState: null,
+    editorStateMapping: STATE
 }
 
 function RedactorReducer(state = initialState, action){
@@ -12,14 +15,15 @@ function RedactorReducer(state = initialState, action){
         case DRAFT.GET:{
             return {
                 ...state,
-                draft: null,
+                draft: {},
+                editorState: null,
                 drafts: action.payload
             };
         }
         case MODERATION.GET:{
             return {
                 ...state,
-                draft: null,
+                draft: {},
                 moderation: action.payload
             };
         }
@@ -28,6 +32,12 @@ function RedactorReducer(state = initialState, action){
               ...state,
               published: action.payload
           };
+        }
+        case POSTS.GET_ALL:{
+            return {
+                ...state,
+                posts: action.payload
+            }
         }
         case DRAFT.OPEN:{
             return {
@@ -47,8 +57,26 @@ function RedactorReducer(state = initialState, action){
         case DRAFT.CLOSE:{
             return {
                 ...state,
-                draft: null
+                draft: {}
             };
+        }
+        case STATE.IN_SAVE:{
+            return{
+                ...state,
+                editorState: STATE.IN_SAVE
+            }
+        }
+        case STATE.SAVED:{
+            return{
+                ...state,
+                editorState: STATE.SAVED
+            }
+        }
+        case STATE.SAVE_ERROR:{
+            return{
+                ...state,
+                editorState: STATE.SAVE_ERROR
+            }
         }
         default:
             return state;

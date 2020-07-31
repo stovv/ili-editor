@@ -60,3 +60,15 @@ export async function getMyPosts(user_id, start, limit){
     }
     `);
 }
+
+export async function getAllPosts(start, limit){
+    return api.ql(`
+    query{
+      posts( start: ${start}, limit: ${limit} ){
+        id,
+        title,
+        updated_at,
+      }
+    }
+    `);
+}

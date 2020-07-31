@@ -4,6 +4,7 @@ import LoginPage from "./LoginPage.react";
 import ModeratePage from "./ModeratePage.react";
 import PublicationsPage from "./PublicationsPage.react";
 import NotFoundPage from "./NotFound.react";
+import AllPostsPage from "./AllPosts.react";
 
 export {
     DraftsPage,
@@ -11,5 +12,6 @@ export {
     LoginPage,
     ModeratePage,
     NotFoundPage,
+    AllPostsPage,
     PublicationsPage
 }

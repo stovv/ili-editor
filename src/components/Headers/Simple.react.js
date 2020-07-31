@@ -1,35 +1,18 @@
 import React from "react";
 import PropTypes from "prop-types";
-import styled from 'styled-components';
 import { Flex, Box } from 'rebass';
+import { connect } from "react-redux";
 import { withTheme } from "styled-components";
 
-import { Auth } from '../api';
-import { connect } from "react-redux";
-import { Typography } from '../components';
-import { BACKEND_URL } from "../constants";
-import { Search, Hamburger } from "../assets";
-import { Separator, Avatar } from "./Common.react";
+import { Typography } from '../index';
+import { BACKEND_URL } from "../../constants";
+import { Search, Hamburger } from "../../assets";
+import { Separator, Avatar } from "../Common.react";
 
-class Header extends React.Component {
 
-    state = {
-        user: {}
-    }
-
-    componentDidMount() {
-        const { userId } = this.props;
-        Auth.me(userId)
-            .then(response => {
-                console.log(response);
-                this.setState({ user: response.data.user});
-            })
-            .catch(res => console.log(res));
-    }
-
+class SimpleHeader extends React.Component {
     render(){
-        const { title, theme, hideName, hamburgerClick } = this.props;
-        const { avatar, name, secondName } = this.state.user;
+        const { title, theme, hideName, hamburgerClick, avatar, name, secondName } = this.props;
 
         return (
             <Flex mb={"54px"} mt={"30px"} mx={window.innerWidth > 365 ? "30px" : "10px"} justifyContent={"space-between"}>
@@ -78,7 +61,7 @@ class Header extends React.Component {
     }
 }
 
-Header.propTypes = {
+SimpleHeader.propTypes = {
     title: PropTypes.string,
     hideName: PropTypes.bool,
     hamburgerClick: PropTypes.func,
@@ -86,8 +69,10 @@ Header.propTypes = {
 
 function mapStateToProps(state) {
     return {
-        userId: state.auth.userId
+        avatar: state.auth.avatar,
+        name: state.auth.name,
+        secondName: state.auth.secondName,
     }
 }
 
-export default connect(mapStateToProps)(withTheme(Header));
+export default connect(mapStateToProps)(withTheme(SimpleHeader));
