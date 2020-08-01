@@ -1,16 +1,18 @@
 import React from 'react';
 import Moment from 'react-moment';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
-
 import { Flex, Box } from 'rebass';
+import toaster from "toasted-notes";
 import { connect } from "react-redux";
+import { Link } from 'react-router-dom';
 import styled, { withTheme } from 'styled-components';
 
 import { Lazy } from "./Images";
 import { Small, XSmall } from './Typography.react';
 //import { Icons } from '../../assets';
 import { EmptyCover } from "../constants";
+import { Toasts} from "./index";
+
 //import {createNewDraft, openDraft} from "../../store/smisolActions.react";
 //import toaster from "toasted-notes";
 //import { Toasts } from "../index";
@@ -49,13 +51,46 @@ class DraftCard extends React.Component {
     }
 
     render() {
-        const { theme, linkPrefix } = this.props;
+        const { theme, linkPrefix, skipState } = this.props;
         const { id, cover, title, rubric, updated_at, state } = this.props.draft;
 
-        //state === "moderation"
+        let bottomContent = (
+            <>
+                <XSmall weight={500} textTransform="lowercase" margin={`${theme.spacing.xs} 0`}
+                        color={ (rubric && rubric.title.length > 0) ? theme.text.hover : theme.text.editorSecondary}>
+                    { (rubric && rubric.title.length > 0)
+                        ? rubric.title
+                        : "Без рубрики"
+                    }
+                </XSmall>
+                <Small maxWidth={["240px"]} margin="0" hideOwerflow maxLines={2} weight={500}
+                       color={(title && title.length > 0)
+                           ? theme.text.secondarySecondary
+                           : theme.text.secondary}>
+                    { (title && title.length > 0)
+                        ? title
+                        : "Без заголовка"
+                    }
+                </Small>
+                <Flex justifyContent={"space-between"} mt={"5px"}>
+                    <XSmall color={theme.text.editorSecondary} margin={0}>
+                        <Moment fromNow locale="ru">{updated_at}</Moment>
+                    </XSmall>
+                    {
+                        (state === 'moderation' && !skipState) &&
+                        <Tag color={theme.colors.yellow}>
+                            <XSmall color={theme.text.onPrimary} margin={0}>
+                                На модерации
+                            </XSmall>
+                        </Tag>
+                    }
+                </Flex>
+            </>
+        );
+
 
         return (
-                <Flex flexDirection={'column'} onClick={this.handleNewDraft}
+                <Flex flexDirection={'column'}
                       height="100%" width="100%" maxWidth={["350px"]} mx="auto"
                       sx={{borderRadius: "15px", overflow: "hidden", cursor: "pointer",
                           boxShadow: "0px 0px 10px -5px rgba(0, 0, 0, 0.7)",
@@ -64,44 +99,33 @@ class DraftCard extends React.Component {
                               boxShadow: "0px 10px 30px -5px rgba(0, 0, 0, 0.7)",
                               transform: "translateY(-3px)"
                           }
-                      }}>
-                    <Box height={"70%"}>
-                        <Link to={`${linkPrefix}${id}`}>
-                            <Lazy cover={cover || EmptyCover}/>
-                        </Link>
-                    </Box>
-                    <Box height={"30%"} bg={theme.colors.backgroundPrimary} p={"10px"}>
-                        <Link to={`${linkPrefix}${id}`}>
-                        {
-                            rubric &&
-                            <XSmall weight={500} color={theme.text.hover} textTransform="lowercase"
-                                    margin={`${theme.spacing.xs} 0`}>
-                                {rubric.title}
-                            </XSmall>
+                      }} onClick={()=>{
+                        if (state === "moderation" && !skipState){
+                            toaster.notify(({ onClose }) => (
+                                    <Toasts.WithEmoji onClose={onClose}>
+                                        👆 Черновик на модерации
+                                    </Toasts.WithEmoji>
+                                ), { position: "bottom-right"}
+                            );
                         }
-                        <Small maxWidth={["240px"]} margin="0" hideOwerflow maxLines={2} weight={500}
-                               color={(title && title.length > 0)
-                                   ? theme.text.secondarySecondary
-                                   : theme.text.secondary}>
-                            { (title && title.length > 0)
-                                ? title
-                                : "Без заголовка"
-                            }
-                        </Small>
-                        <Flex justifyContent={"space-between"} mt={"5px"}>
-                            <XSmall color={theme.text.editorSecondary} margin={0}>
-                                <Moment fromNow locale="ru">{updated_at}</Moment>
-                            </XSmall>
-                            {
-                                state === 'moderation' &&
-                                <Tag color={theme.colors.yellow}>
-                                    <XSmall color={theme.text.onPrimary} margin={0}>
-                                        На модерации
-                                    </XSmall>
-                                </Tag>
-                            }
-                        </Flex>
-                        </Link>
+                    }}>
+                    <Box height={"55%"}>
+                        {
+                            (state !== "moderation" || skipState)
+                                ? <Link to={`${linkPrefix}${id}`}>
+                                    <Lazy cover={cover || EmptyCover}/>
+                                </Link>
+                                : <Lazy cover={cover || EmptyCover}/>
+                        }
+                    </Box>
+                    <Box height={"45%"} bg={theme.colors.backgroundPrimary} p={"10px"}>
+                        {
+                            (state !== "moderation" || skipState)
+                                ? <Link to={`${linkPrefix}${id}`}>
+                                    {bottomContent}
+                                </Link>
+                                : bottomContent
+                        }
                     </Box>
                 </Flex>
 
@@ -123,6 +147,7 @@ class DraftCard extends React.Component {
 DraftCard.propTypes = {
     linkPrefix: PropTypes.string.isRequired,
     draft: PropTypes.object.isRequired,
+    skipState: PropTypes.bool
 }
 
 export default connect()(withTheme(DraftCard));

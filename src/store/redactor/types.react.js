@@ -11,8 +11,24 @@ export const STATE = {
     SAVE_ERROR: "STATE_SAVE_ERROR"
 }
 
+export const POPUP = {
+    OPEN: "OPEN_POPUP",
+    CLOSE: "CLOSE_POPUP"
+}
+
+export const TEMP = {
+    ADD: "ADD_TO_TMP",
+    CLEAR: "CLEAR_TMP"
+}
+
 export const MODERATION = {
   GET: "GET_MODERATION"
+};
+
+export const DATA = {
+  GET: {
+      RUBRICS: "GET_RUBRICS_DATA"
+  }
 };
 
 export const POSTS = {

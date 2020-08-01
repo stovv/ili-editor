@@ -8,6 +8,7 @@ import { Logo } from "../../assets";
 import { Separator, Avatar } from "../Common.react";
 import SimpleButton from "../Buttons/Simple.react";
 import { XSmall } from "../Typography.react";
+import {Redactor} from "../../actions";
 
 
 const RedactorLogo=({theme})=>(
@@ -26,13 +27,13 @@ const RedactorLogo=({theme})=>(
 
 class EditorHeader extends React.Component {
     render(){
-        const { theme, avatar, editorState, stateMapping } = this.props;
+        const { theme, avatar, editorState, stateMapping, dispatch } = this.props;
 
         let stateMessage = "";
         if ( editorState !== null ){
             switch (editorState){
                 case stateMapping.IN_SAVE:{
-                    stateMessage = "Созраняем..."
+                    stateMessage = "Сохраняем..."
                     break
                 }
                 case stateMapping.SAVED:{
@@ -60,8 +61,8 @@ class EditorHeader extends React.Component {
                             editorState !== null &&
                                 <XSmall margin="auto 20px auto 0" color={theme.text.secondary}>{stateMessage}</XSmall>
                         }
-                        <SimpleButton mini onclick={()=>{
-
+                        <SimpleButton mini onClick={()=>{
+                            dispatch(Redactor.openPopUp(1));
                         }}>На модерацию</SimpleButton>
                         {
                             avatar !== undefined &&

@@ -1,4 +1,4 @@
-import {DRAFT, MODERATION, POSTS, STATE} from "./types.react";
+import {DATA, DRAFT, MODERATION, POPUP, POSTS, STATE, TEMP} from "./types.react";
 
 let initialState = {
     draft: {},
@@ -7,6 +7,9 @@ let initialState = {
     published: [],
     posts: [],
     editorState: null,
+    popUpId: 1,
+    tmp: {},
+    rubric: [],
     editorStateMapping: STATE
 }
 
@@ -76,6 +79,39 @@ function RedactorReducer(state = initialState, action){
             return{
                 ...state,
                 editorState: STATE.SAVE_ERROR
+            }
+        }
+        case POPUP.OPEN:{
+            return {
+                ...state,
+                popUpId: action.payload
+            }
+        }
+        case POPUP.CLOSE:{
+            return {
+                ...state,
+                popUpId: null
+            }
+        }
+        case TEMP.ADD:{
+            return{
+                ...state,
+                tmp: {
+                    ...state.tmp,
+                    ...action.payload
+                }
+            }
+        }
+        case TEMP.CLEAR:{
+            return{
+                ...state,
+                tmp: {}
+            }
+        }
+        case DATA.GET.RUBRICS:{
+            return {
+                ...state,
+                rubric: action.payload
             }
         }
         default:

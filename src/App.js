@@ -5,6 +5,8 @@ import {BrowserRouter as Router,
     Route,
     withRouter
 } from "react-router-dom";
+
+import { registerPlugin } from 'react-filepond';
 import {
     PrivateRoute,
     SideContainer
@@ -18,9 +20,17 @@ import {
 import { Mapping } from './mapping';
 import IliThemeProvider from "./theme";
 
-import 'moment/locale/ru';
 import './App.css';
+import 'moment/locale/ru';
+import 'filepond/dist/filepond.min.css';
+import 'react-responsive-modal/styles.css';
+import "react-datepicker/dist/react-datepicker.css";
 
+import FilePondPluginImageExifOrientation from 'filepond-plugin-image-exif-orientation';
+import FilePondPluginImagePreview from 'filepond-plugin-image-preview';
+import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css';
+
+registerPlugin(FilePondPluginImageExifOrientation, FilePondPluginImagePreview);
 
 class App extends React.Component {
 

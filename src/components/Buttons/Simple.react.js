@@ -1,16 +1,34 @@
+import React from "react";
+import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
+
 const SimpleButton = styled.button`
-    color: ${props => props.outline ? props.theme.colors.primary: "#ffffff"};
     text-decoration: none;
-    background: ${props => props.outline ? "#ffffff" : props.theme.colors.primary};
-    border: 2px solid ${props => props.theme.colors.primary} !important;
     border-radius: 5px;
     display: inline-block;
     transition: all 0.4s ease 0s;
     outline: none;
-    cursor: pointer;
-    
+    user-select: none;
+    ${({inactive, outline, theme}) => inactive 
+        ? `
+            color: ${theme.text.buttonDisable};
+            background: ${theme.colors.buttonDisable};
+            border: 2px solid ${theme.colors.buttonDisable} !important;
+        `
+        : `
+            cursor: pointer;
+            color: ${outline? theme.colors.primary: "#ffffff"};
+            background: ${outline ? "#ffffff" : theme.colors.primary};
+            border: 2px solid ${theme.colors.primary} !important;
+            :hover {
+                color: ${outline ? "#ffffff" : theme.colors.primary};
+                background: ${outline ? theme.colors.primary : "#ffffff"};
+                border-color: ${theme.colors.primary} !important;
+                transition: all 0.4s ease 0s;
+            }
+        `
+    }
     ${({mini}) => mini
         ? `
         height: 100%;
@@ -23,13 +41,28 @@ const SimpleButton = styled.button`
         text-transform: uppercase;
         `
     }
-    
-    :hover {
-        color: ${props => props.outline ? "#ffffff" : props.theme.colors.primary};
-        background: ${props => props.outline ? props.theme.colors.primary : "#ffffff"};
-        border-color: ${props => props.theme.colors.primary} !important;
-        transition: all 0.4s ease 0s;
-    }
 `;
 
-export default SimpleButton;
+class Simple extends React.Component{
+
+    render(){
+
+        const { onInactiveClick, inactive, onClick, ...rest } = this.props;
+
+        return inactive
+            ? <SimpleButton {...rest} onClick={onInactiveClick} inactive/>
+            : <SimpleButton {...rest} onClick={onClick}/>
+    }
+}
+
+
+Simple.propTypes = {
+    inactive: PropTypes.bool,
+    color: PropTypes.string,
+    onClick: PropTypes.func,
+    onInactiveClick: PropTypes.func,
+    outline: PropTypes.bool,
+    mini: PropTypes.bool
+}
+
+export default Simple;

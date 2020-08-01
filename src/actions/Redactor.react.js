@@ -1,4 +1,4 @@
-import {DRAFT, MODERATION, POSTS, STATE} from '../store/redactor/types.react';
+import { DRAFT, MODERATION, POPUP, POSTS, STATE, TEMP, DATA } from '../store/redactor/types.react';
 import { Redactor, Auth, Public } from '../api';
 
 
@@ -44,6 +44,14 @@ const updateDraftAction = (data) =>{
     };
 };
 
+const getRubricsAction = (data) =>{
+    return {
+        type: DATA.GET.RUBRICS,
+        payload: data
+    };
+};
+
+
 const closeDraftAction = {
     type: DRAFT.CLOSE,
     payload: null
@@ -79,6 +87,18 @@ export function getAllPosts(start, limit){
         await Redactor.getAllPosts(start, limit)
             .then(response=>{
                 dispatch(getAllPostsAction(response.data.posts));
+            })
+            .catch(reason=>{
+                console.log(reason);
+            })
+    };
+}
+
+export function getRubrics(){
+    return async dispatch => {
+        await Public.getRubrics()
+            .then(response=>{
+                dispatch(getRubricsAction(response.data));
             })
             .catch(reason=>{
                 console.log(reason);
@@ -154,6 +174,44 @@ export function setRedactorSaveError(){
     return async dispatch =>{
         dispatch({
             type: STATE.SAVE_ERROR,
+            payload: null
+        })
+    }
+}
+
+export function openPopUp(pid){
+    return async dispatch =>{
+        dispatch({
+            type: POPUP.OPEN,
+            payload: pid
+        })
+    }
+}
+
+export function closePopUp(){
+    return async dispatch =>{
+        dispatch({
+            type: POPUP.CLOSE,
+            payload: null
+        })
+    }
+}
+
+export function addTempData(key, value){
+    return async dispatch =>{
+        dispatch({
+            type: TEMP.ADD,
+            payload: {
+                [key]: value
+            }
+        })
+    }
+}
+
+export function clearTemp(){
+    return async dispatch =>{
+        dispatch({
+            type: TEMP.CLEAR,
             payload: null
         })
     }

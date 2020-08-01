@@ -5,6 +5,7 @@ const light = {
         backgroundPrimary: '#ffffff',
         backgroundInvert: '#4a4a4a',
         backgroundInverted: '#0e0e0e',
+        buttonDisable: "#CCCCCC",
         orange: "#e76f51",
         green: "#2a9d8f",
         yellow: "#ff9234",
@@ -14,10 +15,12 @@ const light = {
         primary: '#050505',
         hover: '#eb5757',
         secondary: '#4a4a4a',
+        buttonDisable: '#888888',
         secondarySecondary: '#0e0e0e',
         onPrimary: '#ffffff',
         editorSecondary: "#707684"
     },
+
 }
 
 const dark = {
