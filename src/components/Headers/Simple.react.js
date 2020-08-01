@@ -3,18 +3,20 @@ import PropTypes from "prop-types";
 import { Flex, Box } from 'rebass';
 import { connect } from "react-redux";
 import { FiPlus } from "react-icons/fi";
+import { withRouter } from "react-router-dom";
 import { withTheme } from "styled-components";
 
 import { Typography } from '../index';
 import { BACKEND_URL } from "../../constants";
 import { Hamburger } from "../../assets";
 import { Separator, Avatar } from "../Common.react";
-import {IconContext} from "react-icons";
+import { IconContext } from "react-icons";
+import { Redactor } from "../../actions";
 
 
 class SimpleHeader extends React.Component {
     render(){
-        const { title, theme, hideName, hamburgerClick, avatar, name, secondName } = this.props;
+        const { title, theme, hideName, hamburgerClick, avatar, name, secondName, dispatch, history, draft } = this.props;
 
         return (
             <Flex mb={"54px"} mt={"30px"} mx={window.innerWidth > 365 ? "30px" : "10px"} justifyContent={"space-between"}>
@@ -39,7 +41,10 @@ class SimpleHeader extends React.Component {
                         <IconContext.Provider value={{ color: theme.text.editorSecondary, size: "24px" }}>
                             <Box my={"auto"}>
                                     <FiPlus onClick={()=>{
-                                        console.log("ON Plus click")
+                                        dispatch(Redactor.createNewDraft())
+                                            .then(()=>{
+                                                history.push(`/edit/draft/${this.props.draft.id}`);
+                                            })
                                     }}/>
                             </Box>
                         </IconContext.Provider>
@@ -77,8 +82,9 @@ function mapStateToProps(state) {
     return {
         avatar: state.auth.avatar,
         name: state.auth.name,
+        draft: state.redactor.draft,
         secondName: state.auth.secondName,
     }
 }
 
-export default connect(mapStateToProps)(withTheme(SimpleHeader));
+export default connect(mapStateToProps)(withTheme(withRouter(SimpleHeader)));

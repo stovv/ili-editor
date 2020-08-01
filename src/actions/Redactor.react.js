@@ -30,6 +30,13 @@ const getPublishedAction = (data) => {
     };
 };
 
+const getScheduleAction = (data) =>{
+    return {
+        type: DRAFT.SCHEDULED,
+        payload: data
+    };
+}
+
 const openDraftAction = (data) =>{
     return {
         type: DRAFT.OPEN,
@@ -51,11 +58,12 @@ const getRubricsAction = (data) =>{
     };
 };
 
-
 const closeDraftAction = {
     type: DRAFT.CLOSE,
     payload: null
 };
+
+// -------  actions ------------
 
 
 export function getDrafts(){
@@ -106,12 +114,23 @@ export function getRubrics(){
     };
 }
 
-
 export function getPublishedPosts(user_id, start, limit){
     return async dispatch => {
         await Redactor.getMyPosts(user_id, start, limit)
             .then(response=>{
                 dispatch(getPublishedAction(response.data.posts));
+            })
+            .catch(reason=>{
+                console.log(reason);
+            })
+    };
+}
+
+export function getScheduledPosts(){
+    return async dispatch => {
+        await Redactor.getScheduledPosts()
+            .then(response=>{
+                dispatch(getScheduleAction(response.data));
             })
             .catch(reason=>{
                 console.log(reason);
@@ -136,6 +155,30 @@ export function openDraft(draftId){
             });
     };
 }
+
+export function openPost(postId){
+    return async dispatch => {
+        await Public.getPost(postId)
+            .then(response=>{
+                dispatch(openDraftAction(response.data));
+            });
+    };
+}
+
+export function updatePost(postId, data){
+    console.log("INPUT", data);
+    return async dispatch => {
+        await Redactor.updatePost(postId, data)
+            .then(response=>{
+                console.log("OUT", response);
+                dispatch(updateDraftAction(response.data));
+            })
+            .catch(reason=>{
+                console.log(reason)
+            });
+    };
+}
+
 
 export function updateDraft(draftId, data){
     return async dispatch => {

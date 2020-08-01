@@ -1,4 +1,4 @@
-import { SIGN } from "./types.react";
+import {REDIRECT, SIGN} from "./types.react";
 
 
 let initialState = {
@@ -9,6 +9,7 @@ let initialState = {
     name: null,
     secondName: null,
     jwt: "",
+    redirectTo: null
 };
 
 
@@ -31,8 +32,15 @@ function AuthReducer(state = initialState, action){
                 avatar: action.payload.user.avatar,
                 name: action.payload.user.name,
                 secondName: action.payload.user.secondName,
-                userId: action.payload.user.id
+                userId: action.payload.user.id,
+                redirectTo: "/"
             };
+        }
+        case REDIRECT.CLEAN:{
+            return {
+                ...state,
+                redirectTo: null
+            }
         }
         default:
             return state;

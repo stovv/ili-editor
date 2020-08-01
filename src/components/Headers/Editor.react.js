@@ -11,7 +11,7 @@ import { XSmall } from "../Typography.react";
 import {Redactor} from "../../actions";
 
 
-const RedactorLogo=({theme})=>(
+const RedactorLogo=({theme, typeHeader})=>(
     <Flex justifyContent="center" my={"auto"}>
         <Box my={"auto"} width={"50px"} height={"50px"}>
             <Logo width="100%" primary={theme.colors.primary}
@@ -20,14 +20,22 @@ const RedactorLogo=({theme})=>(
         <Box my={"auto"}>
             <Separator margin="0 10px"/>
         </Box>
-        <XSmall margin="auto 0" color={theme.text.secondary}>Черновик</XSmall>
+        <XSmall margin="auto 0" color={theme.text.secondary}>{
+            typeHeader === "moderation"
+                ? "Редактура"
+                : (
+                    typeHeader === "post"
+                        ? "Статья"
+                        : "Черновик"
+                )
+        }</XSmall>
     </Flex>
 );
 
 
 class EditorHeader extends React.Component {
     render(){
-        const { theme, avatar, editorState, stateMapping, dispatch } = this.props;
+        const { theme, avatar, editorState, stateMapping, dispatch, typeHeader } = this.props;
 
         let stateMessage = "";
         if ( editorState !== null ){
@@ -52,7 +60,7 @@ class EditorHeader extends React.Component {
                   mx={"auto"} maxWidth={"1000px"} px={"20px"}>
                 <Box my={"auto"}>
                     <Flex>
-                        <RedactorLogo theme={theme}/>
+                        <RedactorLogo theme={theme} typeHeader={typeHeader}/>
                     </Flex>
                 </Box>
                 <Box my={"auto"}>
@@ -61,9 +69,21 @@ class EditorHeader extends React.Component {
                             editorState !== null &&
                                 <XSmall margin="auto 20px auto 0" color={theme.text.secondary}>{stateMessage}</XSmall>
                         }
-                        <SimpleButton mini onClick={()=>{
-                            dispatch(Redactor.openPopUp(1));
-                        }}>На модерацию</SimpleButton>
+                        {
+                            typeHeader === "moderation"
+                                ? <SimpleButton mini onClick={()=>{
+                                    dispatch(Redactor.openPopUp(1));
+                                }}>Опубликовать</SimpleButton>
+                                : (
+                                    typeHeader === "post"
+                                      ? <SimpleButton mini onClick={()=>{
+                                            dispatch(Redactor.openPopUp(1));
+                                        }}>Обновить</SimpleButton>
+                                      : <SimpleButton mini onClick={()=>{
+                                            dispatch(Redactor.openPopUp(1));
+                                        }}>На модерацию</SimpleButton>
+                                  )
+                        }
                         {
                             avatar !== undefined &&
                             <Box my={"auto"}>

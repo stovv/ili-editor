@@ -24,6 +24,12 @@ const Tag = styled.div`
     border-radius: 16px;
 `;
 
+const LinkComp = ({to, externalLink, children}) =>(
+    externalLink
+        ? <a target="_blank" href={to}>{children}</a>
+        : <Link to={to}>{children}</Link>
+)
+
 
 class DraftCard extends React.Component {
 
@@ -51,8 +57,8 @@ class DraftCard extends React.Component {
     }
 
     render() {
-        const { theme, linkPrefix, skipState } = this.props;
-        const { id, cover, title, rubric, updated_at, state } = this.props.draft;
+        const { theme, linkPrefix, skipState, externalLink, withTime } = this.props;
+        const { id, cover, title, rubric, updated_at, state, publishDate } = this.props.draft;
 
         let bottomContent = (
             <>
@@ -73,9 +79,15 @@ class DraftCard extends React.Component {
                     }
                 </Small>
                 <Flex justifyContent={"space-between"} mt={"5px"}>
-                    <XSmall color={theme.text.editorSecondary} margin={0}>
-                        <Moment fromNow locale="ru">{updated_at}</Moment>
-                    </XSmall>
+                    {
+                        withTime
+                            ? <XSmall color={theme.text.editorSecondary} margin={0}>
+                                Будет опубликованно <Moment locale="ru" format="D MMM YYYY HH:mm" withTitle>{publishDate}</Moment>
+                            </XSmall>
+                            : <XSmall color={theme.text.editorSecondary} margin={0}>
+                                <Moment fromNow locale="ru">{updated_at}</Moment>
+                            </XSmall>
+                    }
                     {
                         (state === 'moderation' && !skipState) &&
                         <Tag color={theme.colors.yellow}>
@@ -112,18 +124,18 @@ class DraftCard extends React.Component {
                     <Box height={"55%"}>
                         {
                             (state !== "moderation" || skipState)
-                                ? <Link to={`${linkPrefix}${id}`}>
+                                ? <LinkComp to={`${linkPrefix}${id}`} externalLink={externalLink}>
                                     <Lazy cover={cover || EmptyCover}/>
-                                </Link>
+                                </LinkComp>
                                 : <Lazy cover={cover || EmptyCover}/>
                         }
                     </Box>
                     <Box height={"45%"} bg={theme.colors.backgroundPrimary} p={"10px"}>
                         {
                             (state !== "moderation" || skipState)
-                                ? <Link to={`${linkPrefix}${id}`}>
+                                ? <LinkComp to={`${linkPrefix}${id}`} externalLink={externalLink}>
                                     {bottomContent}
-                                </Link>
+                                </LinkComp>
                                 : bottomContent
                         }
                     </Box>
@@ -147,7 +159,9 @@ class DraftCard extends React.Component {
 DraftCard.propTypes = {
     linkPrefix: PropTypes.string.isRequired,
     draft: PropTypes.object.isRequired,
-    skipState: PropTypes.bool
+    skipState: PropTypes.bool,
+    externalLink: PropTypes.bool,
+    withTime: PropTypes.bool
 }
 
 export default connect()(withTheme(DraftCard));

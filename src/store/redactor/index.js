@@ -5,6 +5,7 @@ let initialState = {
     drafts: [],
     moderation: [],
     published: [],
+    scheduled: [],
     posts: [],
     editorState: null,
     popUpId: 1,
@@ -112,6 +113,12 @@ function RedactorReducer(state = initialState, action){
             return {
                 ...state,
                 rubric: action.payload
+            }
+        }
+        case DRAFT.SCHEDULED:{
+            return {
+                ...state,
+                scheduled: action.payload
             }
         }
         default:

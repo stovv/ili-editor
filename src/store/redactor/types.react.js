@@ -2,7 +2,8 @@ export const DRAFT = {
     GET: "GET_DRAFT",
     OPEN: "OPEN_DRAFT",
     UPDATE: "UPDATE_DRAFT",
-    CLOSE: "CLOSE_DRAFT"
+    CLOSE: "CLOSE_DRAFT",
+    SCHEDULED: "GET_SCHEDULED_DRAFTS"
 };
 
 export const STATE = {
@@ -33,5 +34,7 @@ export const DATA = {
 
 export const POSTS = {
     GET_MY: "GET_PUBLISHED_POSTS",
-    GET_ALL: "GET_ALL_POSTS"
+    GET_ALL: "GET_ALL_POSTS",
+    OPEN: "OPEN_POST",
+    UPDATE: "UPDATE_POST"
 }

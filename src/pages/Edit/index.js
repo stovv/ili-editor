@@ -28,10 +28,12 @@ class EditPage extends React.Component{
             files: null,
             description: null,
             eventDate: new Date(),
-            publishDate: new Date()
+            publishDate: new Date(),
+            isModeration: this.props.match.url.includes('moderate'),
+            isPost: this.props.match.url.includes('post')
         }
         this.autoSave = this.autoSave.bind(this);
-        this.sendDraftToModeration = this.sendDraftToModeration.bind(this);
+        this.sendDraftTo = this.sendDraftTo.bind(this);
         this.editorInstance = undefined;
         props.dispatch(Redactor.clearTemp());
         props.dispatch(Redactor.closeDraft());
@@ -39,31 +41,64 @@ class EditPage extends React.Component{
     }
 
     componentDidMount() {
+        const { isPost } = this.state;
         const { dispatch, match } = this.props;
-        dispatch(Redactor.openDraft(match.params.id))
-            .then(()=>{
-                let files = [];
-                if ( this.props.draft.cover !== null ){
-                    files.push(`${BACKEND_URL}${this.props.draft.cover.url}`);
-                    dispatch(Redactor.addTempData('draftCover', this.props.draft.cover))
-                }
-                this.setState({ loading: false, files });
+
+        const action = ()=>{
+            let files = [];
+            if ( this.props.draft.cover !== null ){
+                files.push(`${BACKEND_URL}${this.props.draft.cover.url}`);
+                dispatch(Redactor.addTempData('draftCover', this.props.draft.cover))
+            }
+            this.setState({
+                loading: false,
+                files,
+                description: (this.props.draft && this.props.draft.description != null && this.props.draft.description.length > 0 )
+                    ? this.props.draft.description
+                    : null,
+                eventDate: this.props.draft && this.props.draft.eventDate !== null ? new Date(this.props.draft.eventDate) : new Date(),
+                publishDate: this.props.draft && (
+                    this.state.isPost
+                        ? this.props.draft && this.props.draft.publish_at !== null ? new Date(this.props.draft.publish_at) : new Date()
+                        : this.props.draft && this.props.draft.publishDate !== null ? new Date(this.props.draft.publishDate) : new Date()
+                ),
             });
+        };
+
+        if ( isPost ){
+            dispatch(Redactor.openPost(match.params.id))
+                .then(()=>action());
+        }else{
+            dispatch(Redactor.openDraft(match.params.id))
+                .then(()=>action());
+        }
+
         this.autoSave();
     }
 
     autoSave(){
         const { dispatch, editorState, stateMapping, match } = this.props;
+        const { isPost } = this.state;
+
         setTimeout(function () {
             if (this.editorInstance !== undefined &&
                 typeof this.editorInstance.save !== "undefined" && editorState === stateMapping.IN_SAVE){
                 this.editorInstance.save()
                     .then(outputData => {
-                        dispatch(Redactor.updateDraft(match.params.id, {
-                            blocks: outputData
-                        })).then(()=>{
-                            dispatch(Redactor.setRedactorSaved());
-                        });
+                        console.log(outputData);
+                        if ( isPost ){
+                            dispatch(Redactor.updatePost(match.params.id, {
+                                blocks: outputData
+                            })).then(()=>{
+                                dispatch(Redactor.setRedactorSaved());
+                            });
+                        }else{
+                            dispatch(Redactor.updateDraft(match.params.id, {
+                                blocks: outputData
+                            })).then(()=>{
+                                dispatch(Redactor.setRedactorSaved());
+                            });
+                        }
                     })
                     .catch(reason=>{
                         console.log('Error saving:', reason);
@@ -92,7 +127,7 @@ class EditPage extends React.Component{
             || this.state.eventDate !== nextState.eventDate;
     }
 
-    sendDraftToModeration(){
+    sendDraftTo(to){
         const { match, dispatch, tmpCover, tmpRubric, draft, history } = this.props;
         const { description, eventDate, publishDate } = this.state;
 
@@ -102,6 +137,7 @@ class EditPage extends React.Component{
         if ( (draft.cover !== null && tmpCover.id !== draft.cover.id) || draft.cover === null ){
             nData.cover = tmpCover.id;
         }
+
         if ( (draft.rubric !== null && tmpRubric.id !== draft.rubric.id) || draft.rubric === null ){
             nData.rubric = tmpRubric.id;
             if(tmpRubric.withEventDate){
@@ -112,22 +148,32 @@ class EditPage extends React.Component{
             nData.isEvent = true;
             nData.eventDate = eventDate;
         }
+
+        if ( to === "publication" ){
+            nData.publishDate = publishDate;
+        }
         nData.description = description;
-        nData.state = "moderation";
-        nData.publishDate = publishDate;
-
-
-        dispatch(Redactor.updateDraft(match.params.id, nData)).then(()=>{
-            dispatch(Redactor.clearTemp());
-            dispatch(Redactor.closeDraft());
-            history.push('/');
-        });
+        if ( to !== null ){
+            nData.state = to;
+            dispatch(Redactor.updateDraft(match.params.id, nData)).then(()=>{
+                dispatch(Redactor.clearTemp());
+                dispatch(Redactor.closeDraft());
+                history.push('/');
+            });
+        }else{
+            dispatch(Redactor.updatePost(match.params.id, nData)).then(()=>{
+                dispatch(Redactor.clearTemp());
+                dispatch(Redactor.closeDraft());
+                history.push('/');
+            });
+        }
     }
 
     render() {
-        const { loading, files } = this.state;
+        const { loading, files, isModeration, isPost } = this.state;
         const { dispatch, tmpCover, tmpRubric } = this.props;
         const { blocks } = this.props.draft;
+
         if ( loading ){
             return <IliThemeProvider><Loader/></IliThemeProvider>
         }
@@ -136,10 +182,19 @@ class EditPage extends React.Component{
             <>
                 <RedactorTypogrphy/>
                 <IliThemeProvider>
-                    <Headers.Editor/>
-                    <PopUp pid={1} title={"Прежде чем отправить на модерацию"}>
+                    <Headers.Editor typeHeader={isModeration ? "moderation"  : ( isPost ? "post" : undefined) }/>
+                    <PopUp pid={1} title={
+                        isModeration || isPost
+                          ? "Прежде чем опубликовать"
+                          : "Прежде чем отправить на модерацию"
+
+                    }>
                         <Box my={"30px"}>
-                            <Typography.Small weight={400}>1. Выберете обложку</Typography.Small>
+                            <Typography.Small weight={400}>{
+                                isModeration || isPost
+                                  ? "1. Удтвердите или поменяйте обложку"
+                                  : "1. Выберете обложку"
+                            }</Typography.Small>
                             <FilePond
                                 ref={ref => (this.pond = ref)}
                                 files={files}
@@ -239,23 +294,42 @@ class EditPage extends React.Component{
                             </Box>
                         </Flex>
                     </PopUp>
-                    <PopUp pid={2} title={"Прежде чем отправить на модерацию"}>
+                    <PopUp pid={2} title={
+                        isModeration || isPost
+                            ? "Прежде чем опубликовать"
+                            : "Прежде чем отправить на модерацию"
+
+                    }>
                         <Box my={"30px"}>
-                            <Typography.Small weight={400}>2. Выберете тему</Typography.Small>
+                            <Typography.Small weight={400}>{
+                                isModeration || isPost
+                                    ? "2. Удтверите или поменяйте рубрику"
+                                    : "2. Выберете рубрику"
+                            }</Typography.Small>
                             <ListBox listType={"rubric"} initialValue={this.props.draft.rubric ? this.props.draft.rubric: undefined}/>
                         </Box>
                         <Box mb={"30px"}>
-                            <Typography.Small weight={400}>3. Кратко опишите</Typography.Small>
-                            <Textarea sx={{
-                                border: "1px solid #cfcfd3",
-                                borderRadius: "4px",
-                                minHeight: "120px"
+                            <Typography.Small weight={400}>{
+                                isModeration || isPost
+                                ? "3. Проверьте краткое описание"
+                                : "3. Кратко опишите"
+                            }</Typography.Small>
+                            <Textarea
+                                value={this.state.description}
+                                sx={{
+                                    border: "1px solid #cfcfd3",
+                                    borderRadius: "4px",
+                                    minHeight: "120px"
                             }} onChange={(e)=>this.setState({description: e.target.value})}/>
                         </Box>
                         {
                             (tmpRubric !== undefined && tmpRubric !== null && tmpRubric.withEventDate)
                                 && <Box mb={"30px"}>
-                                    <Typography.Small weight={400}>4. Добавьте дату события</Typography.Small>
+                                    <Typography.Small weight={400}>{
+                                        isModeration || isPost
+                                            ? "4. Проверьте дату события"
+                                            : "4. Добавьте дату события"
+                                    }</Typography.Small>
                                     <DatePicker
                                         selected={this.state.eventDate}
                                         onChange={date => this.setState({
@@ -274,7 +348,13 @@ class EditPage extends React.Component{
                                 <Buttons.Simple inactive={(this.state.description === null ||
                                 this.state.description.length < 10) ||
                                 (tmpRubric === undefined || tmpRubric === null)}
-                                                onClick={()=>dispatch(Redactor.openPopUp(3))}
+                                                onClick={()=>{
+                                                    if (isModeration){
+                                                        dispatch(Redactor.openPopUp(3))
+                                                    }else{
+                                                        this.sendDraftTo(isPost ? null : "moderation")
+                                                    }
+                                                }}
                                                 onInactiveClick={() => {
                                                     toaster.notify(({ onClose }) => (
                                                             <Toasts.WithEmoji onClose={onClose}>
@@ -282,11 +362,16 @@ class EditPage extends React.Component{
                                                             </Toasts.WithEmoji>
                                                         ), { position: "bottom-right"}
                                                     );
-                                                }}>Дальше</Buttons.Simple>
+                                                }}>{isModeration ? "Дальше" : "Отправить"}</Buttons.Simple>
                             </Box>
                         </Flex>
                     </PopUp>
-                    <PopUp pid={3} title={"Прежде чем отправить на модерацию"}>
+                    <PopUp pid={3} title={
+                        isModeration || isPost
+                            ? "Прежде чем опубликовать"
+                            : "Прежде чем отправить на модерацию"
+
+                    }>
                         <Box my={"30px"}>
                             <Typography.Small weight={400}>Когда запланировать публикацию?</Typography.Small>
                             <DatePicker
@@ -302,7 +387,7 @@ class EditPage extends React.Component{
                         <Flex justifyContent={"space-between"}>
                             <Box width={1/5}/>
                             <Box width={1/5}>
-                                <Buttons.Simple onClick={()=>this.sendDraftToModeration()}>Отправить</Buttons.Simple>
+                                <Buttons.Simple onClick={()=>this.sendDraftTo("publication")}>Отправить</Buttons.Simple>
                             </Box>
                         </Flex>
                     </PopUp>

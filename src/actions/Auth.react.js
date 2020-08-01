@@ -1,4 +1,4 @@
-import { SIGN } from "../store/auth/types.react";
+import {REDIRECT, SIGN} from "../store/auth/types.react";
 import { Auth } from '../api';
 
 function signInAction(data){
@@ -31,3 +31,12 @@ export function logout(){
         dispatch(signOutAction)
     }
 }
+
+export function cleanRedirect(){
+    return async dispatch => {
+        dispatch({
+            type: REDIRECT.CLEAN
+        })
+    }
+}
+

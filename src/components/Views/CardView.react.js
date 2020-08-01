@@ -19,7 +19,7 @@ class CardsView extends React.Component{
     }
 
     orderLines(){
-        const { drafts, theme, prefix, skipState } = this.props;
+        const { drafts, theme, prefix, skipState, externalLink, withTime } = this.props;
         const { width } = this.state;
 
         if ( drafts == null ){
@@ -40,7 +40,8 @@ class CardsView extends React.Component{
                                 drafts.slice(i, i + sepCount).map((item, index)=>
                                     <React.Fragment key={index}>
                                         <Box width={1/sepCount} height="250px" >
-                                            <DraftCard draft={item} linkPrefix={prefix} skipState={skipState}/>
+                                            <DraftCard draft={item} linkPrefix={prefix} skipState={skipState}
+                                                       externalLink={externalLink} withTime={withTime}/>
                                         </Box>
                                     </React.Fragment>
                                 )
@@ -54,7 +55,8 @@ class CardsView extends React.Component{
                 items.push(
                     <React.Fragment key={index}>
                         <Box width={"100%"} px={"5px"} mx="auto" mb={theme.spacing.block} height="250px">
-                            <DraftCard draft={item} linkPrefix={prefix} skipState={skipState}/>
+                            <DraftCard draft={item} linkPrefix={prefix} skipState={skipState}
+                                       externalLink={externalLink} withTime={withTime}/>
                         </Box>
                     </React.Fragment>
                 );
@@ -112,7 +114,9 @@ CardsView.propTypes ={
     prefix: PropTypes.string.isRequired,
     drafts: PropTypes.array.isRequired,
     emptyMessage: PropTypes.string,
-    skipState: PropTypes.bool
+    skipState: PropTypes.bool,
+    externalLink: PropTypes.bool,
+    withTime: PropTypes.bool
 }
 
 

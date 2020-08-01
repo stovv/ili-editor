@@ -16,7 +16,6 @@ class PopUp extends React.Component{
         const { pid, openedId, children, title, dispatch } = this.props;
 
         return (
-
             <Modal open={pid === openedId} onClose={()=>{
                 dispatch(Redactor.closePopUp());
             }}>

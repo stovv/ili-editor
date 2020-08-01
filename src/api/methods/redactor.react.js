@@ -56,9 +56,30 @@ export async function getMyPosts(user_id, start, limit){
         id,
         title,
         updated_at,
+        publish_at,
+        created_at,
+        rubric {
+            title
+        },
+        cover{
+            url,
+            mime,
+            ext,
+            name,
+            width,
+            height
+            formats
+        }
       }
     }
     `);
+}
+
+export async function getScheduledPosts(){
+    const jwt = getJwt();
+    return api.get('/draftsOnPublication', {
+        headers: { 'Authorization': `Bearer ${jwt}`}
+    });
 }
 
 export async function getAllPosts(start, limit){
@@ -67,7 +88,21 @@ export async function getAllPosts(start, limit){
       posts( start: ${start}, limit: ${limit} ){
         id,
         title,
+        rubric {
+            title
+        },
         updated_at,
+        publish_at,
+        created_at,
+        cover{
+            url,
+            mime,
+            ext,
+            name,
+            width,
+            height
+            formats
+        }
       }
     }
     `);

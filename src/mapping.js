@@ -1,5 +1,5 @@
-import { FiEdit3, FiItalic, FiFeather, FiFileText } from "react-icons/fi";
-import { AllPostsPage, DraftsPage, LoginPage, ModeratePage, PublicationsPage } from "./pages";
+import { FiEdit3, FiItalic, FiFeather, FiFileText, FiZap } from "react-icons/fi";
+import { AllPostsPage, DraftsPage, LoginPage, ModeratePage, PublicationsPage, SchedulePage } from "./pages";
 
 export let Mapping = {
     '/': {
@@ -31,6 +31,14 @@ export let Mapping = {
         icon: FiFileText,
         authRequired: true,
         page: AllPostsPage
+    },
+    '/scheduled': {
+        title: 'Запланированные',
+        contentType: 'menuItems',
+        userType: 3,
+        icon: FiZap,
+        authRequired: true,
+        page: SchedulePage
     },
     '/login':{
         title: 'Вход',

@@ -58,7 +58,9 @@ class App extends React.Component {
                         }
                     })
                 }
-                <Route path={'/edit/draft/:id'} component={EditPage}/>
+                <PrivateRoute path={'/edit/draft/:id'} component={EditPage}/>
+                <PrivateRoute path={`/moderate/draft/:id`} component={EditPage}/>
+                <PrivateRoute path={`/edit/post/:id`} component={EditPage}/>
                 <Route component={NotFoundPage}/>
             </Switch>
         </Router>
