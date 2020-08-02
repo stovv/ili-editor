@@ -10,6 +10,11 @@
 // To learn more about the benefits of this model and instructions on how to
 // opt-in, read https://bit.ly/CRA-PWA
 
+import toaster from "toasted-notes";
+import {Toasts} from "./components";
+import React from "react";
+import IliThemeProvider from "./theme";
+
 const isLocalhost = Boolean(
   window.location.hostname === 'localhost' ||
     // [::1] is the IPv6 localhost address.
@@ -72,6 +77,16 @@ function registerValidSW(swUrl, config) {
               console.log(
                 'New content is available and will be used when all ' +
                   'tabs for this page are closed. See https://bit.ly/CRA-PWA.'
+              );
+              toaster.notify(({ onClose }) => (
+                      <Toasts.WithEmoji onClose={()=>{
+                        window.location.reload(true);
+                        onClose()
+                      }} color={"#ffffff"} textColor={"#4a4a4a"}>
+                        Доступна новая версия! 🚀 <br/>
+                        Нажмите для перезагрузки приложения 😊
+                      </Toasts.WithEmoji>
+                  ), { position: "top-right", duration: null }
               );
 
               // Execute callback

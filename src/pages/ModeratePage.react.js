@@ -2,7 +2,8 @@ import React from 'react';
 import { connect } from "react-redux";
 
 import { Redactor } from '../actions';
-import { Views } from '../components';
+import {Toasts, Views} from '../components';
+import toaster from "toasted-notes";
 
 
 class ModeratePage extends React.Component{

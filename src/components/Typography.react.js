@@ -163,7 +163,6 @@ export const Normal = styled.p`
 `;
 
 export const Small = styled.p`
-  font-family: ${props=>props.theme.fontFamily};
   color: ${props=>props.color ? props.color : props.theme.colors.black};
   max-width: ${props=> props.maxWidth && props.maxWidth};
   max-height: ${props=> props.maxHeight && props.maxHeight};
@@ -185,6 +184,7 @@ export const Small = styled.p`
   line-height: 1.09;
   letter-spacing: normal;
   white-space: ${props => props.oneLine ? "nowrap": "unset"};
+  font-family: ${props=>props.theme.fontFamily ? props.theme.fontFamily : "Inter"};
   ${({hideOwerflow, maxLines}) => hideOwerflow && `
       text-overflow: ellipsis;
       display: -webkit-box;
