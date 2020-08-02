@@ -123,9 +123,9 @@ class DraftCard extends React.Component {
                       height="100%" width="100%" maxWidth={["350px"]} mx="auto"
                       sx={{borderRadius: "15px", overflow: "hidden", cursor: "pointer",
                           boxShadow: "0px 0px 10px -5px rgba(0, 0, 0, 0.7)",
-                          transition: "all 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) 0s",
+                          transition: "all 0.8s cubic-bezier(0.25, -0.02, 0, 1.01)",
                           "&:hover": {
-                              boxShadow: "0px 10px 30px -5px rgba(0, 0, 0, 0.7)",
+                              boxShadow: "rgb(0 0 0 / 19%) 1px 4px 20px 9px",
                               transform: "translateY(-3px)"
                           }
                       }} onClick={()=>{
