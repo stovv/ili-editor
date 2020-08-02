@@ -14,7 +14,7 @@ import SimpleMenu from "./MenuContent/SimpleMenu.react";
 const SidebarLogo=({theme})=>(
     <Flex justifyContent="center" my={"30px"}>
         <Box my={"auto"} width={"40px"} height={"40px"}>
-            <Logo width="100%" primary={theme.colors.primary}
+            <Logo width="100%" primary={theme.colors.backgroundPrimary}
                   background={theme.colors.secondary}/>
         </Box>
         <Box my={"auto"}>
