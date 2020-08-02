@@ -5,17 +5,14 @@ import { Flex, Box } from 'rebass';
 import toaster from "toasted-notes";
 import { connect } from "react-redux";
 import { Link } from 'react-router-dom';
+import { IconContext } from "react-icons";
+import { FiUsers, FiUser } from "react-icons/fi";
 import styled, { withTheme } from 'styled-components';
 
 import { Lazy } from "./Images";
-import { Small, XSmall } from './Typography.react';
-//import { Icons } from '../../assets';
+import { Toasts } from "./index";
 import { EmptyCover } from "../constants";
-import { Toasts} from "./index";
-
-//import {createNewDraft, openDraft} from "../../store/smisolActions.react";
-//import toaster from "toasted-notes";
-//import { Toasts } from "../index";
+import { Small, XSmall } from './Typography.react';
 
 
 const Tag = styled.div`
@@ -57,19 +54,19 @@ class DraftCard extends React.Component {
     }
 
     render() {
-        const { theme, linkPrefix, skipState, externalLink, withTime } = this.props;
-        const { id, cover, title, rubric, updated_at, state, publishDate } = this.props.draft;
+        const { theme, linkPrefix, skipState, externalLink, withTime, withAuthor } = this.props;
+        const { id, cover, title, rubric, updated_at, state, publishDate, authors } = this.props.draft;
 
         let bottomContent = (
             <>
-                <XSmall weight={500} textTransform="lowercase" margin={`${theme.spacing.xs} 0`}
+                <XSmall weight={500} textTransform="lowercase" margin={`${theme.spacing.xxs} 0`}
                         color={ (rubric && rubric.title.length > 0) ? theme.text.hover : theme.text.editorSecondary}>
                     { (rubric && rubric.title.length > 0)
                         ? rubric.title
                         : "Без рубрики"
                     }
                 </XSmall>
-                <Small maxWidth={["240px"]} margin="0" hideOwerflow maxLines={2} weight={500}
+                <Small maxWidth={["240px"]} margin="0 0 5px 0" hideOwerflow maxLines={2} weight={500}
                        color={(title && title.length > 0)
                            ? theme.text.secondarySecondary
                            : theme.text.secondary}>
@@ -78,7 +75,27 @@ class DraftCard extends React.Component {
                         : "Без заголовка"
                     }
                 </Small>
-                <Flex justifyContent={"space-between"} mt={"5px"}>
+                {
+                    withAuthor &&
+                    <IconContext.Provider value={{ color: theme.text.hover, size: "14px", style: { margin: "auto 5px auto 0" } }}>
+                        {
+                            authors.length > 1
+                                ? <Flex>
+                                    <FiUsers/>
+                                    <XSmall color={theme.text.hover} margin={0}>
+                                        {authors[0].name} {authors[0].secondName} и еще {authors.length - 1}
+                                    </XSmall>
+                                </Flex>
+                                : <Flex>
+                                    <FiUser />
+                                    <XSmall color={theme.text.hover} margin={0}>
+                                        {authors[0].name} {authors[0].secondName}
+                                    </XSmall>
+                                </Flex>
+                        }
+                    </IconContext.Provider>
+                }
+                <Flex justifyContent={"space-between"} my={"5px"}>
                     {
                         withTime
                             ? <XSmall color={theme.text.editorSecondary} margin={0}>
@@ -121,7 +138,7 @@ class DraftCard extends React.Component {
                             );
                         }
                     }}>
-                    <Box height={"55%"}>
+                    <Box height={"100%"} sx={{position: "relative"}}>
                         {
                             (state !== "moderation" || skipState)
                                 ? <LinkComp to={`${linkPrefix}${id}`} externalLink={externalLink}>
@@ -129,16 +146,19 @@ class DraftCard extends React.Component {
                                 </LinkComp>
                                 : <Lazy cover={cover || EmptyCover}/>
                         }
+                        <Box height={"max-content"} width="100%" bg={theme.colors.backgroundPrimary} p={"10px"} sx={{
+                            position: 'absolute', bottom: 0, left: 0
+                        }}>
+                            {
+                                (state !== "moderation" || skipState)
+                                    ? <LinkComp to={`${linkPrefix}${id}`} externalLink={externalLink}>
+                                        {bottomContent}
+                                    </LinkComp>
+                                    : bottomContent
+                            }
+                        </Box>
                     </Box>
-                    <Box height={"45%"} bg={theme.colors.backgroundPrimary} p={"10px"}>
-                        {
-                            (state !== "moderation" || skipState)
-                                ? <LinkComp to={`${linkPrefix}${id}`} externalLink={externalLink}>
-                                    {bottomContent}
-                                </LinkComp>
-                                : bottomContent
-                        }
-                    </Box>
+
                 </Flex>
 
         );
@@ -161,7 +181,8 @@ DraftCard.propTypes = {
     draft: PropTypes.object.isRequired,
     skipState: PropTypes.bool,
     externalLink: PropTypes.bool,
-    withTime: PropTypes.bool
+    withTime: PropTypes.bool,
+    withAuthor: PropTypes.bool
 }
 
 export default connect()(withTheme(DraftCard));

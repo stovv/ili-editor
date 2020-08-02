@@ -9,6 +9,7 @@ import { Separator, Avatar } from "../Common.react";
 import SimpleButton from "../Buttons/Simple.react";
 import { XSmall } from "../Typography.react";
 import {Redactor} from "../../actions";
+import {STATE} from "../../store/redactor/types.react";
 
 
 const RedactorLogo=({theme, typeHeader})=>(
@@ -48,6 +49,10 @@ class EditorHeader extends React.Component {
                     stateMessage = "Сохранено"
                     break
                 }
+                case stateMapping.SAVE_ERROR:{
+                    stateMessage = "Не сохранено"
+                    break
+                }
                 default:{
                     stateMessage = "";
                     break;
@@ -67,21 +72,24 @@ class EditorHeader extends React.Component {
                     <Flex>
                         {
                             editorState !== null &&
-                                <XSmall margin="auto 20px auto 0" color={theme.text.secondary}>{stateMessage}</XSmall>
+                                <XSmall color={stateMessage === "Не сохранено" ? theme.text.hover : theme.text.secondary}
+                                        margin="auto 20px auto 0">
+                                    {stateMessage}
+                                </XSmall>
                         }
                         {
                             typeHeader === "moderation"
-                                ? <SimpleButton mini onClick={()=>{
-                                    dispatch(Redactor.openPopUp(1));
-                                }}>Опубликовать</SimpleButton>
+                                ? <SimpleButton mini onClick={()=>{dispatch(Redactor.openPopUp(1))}}>
+                                    Опубликовать
+                                 </SimpleButton>
                                 : (
                                     typeHeader === "post"
-                                      ? <SimpleButton mini onClick={()=>{
-                                            dispatch(Redactor.openPopUp(1));
-                                        }}>Обновить</SimpleButton>
-                                      : <SimpleButton mini onClick={()=>{
-                                            dispatch(Redactor.openPopUp(1));
-                                        }}>На модерацию</SimpleButton>
+                                      ? <SimpleButton mini onClick={()=>{dispatch(Redactor.openPopUp(1))}}>
+                                            Обновить
+                                        </SimpleButton>
+                                      : <SimpleButton mini onClick={()=>{dispatch(Redactor.openPopUp(1))}}>
+                                            На модерацию
+                                        </SimpleButton>
                                   )
                         }
                         {

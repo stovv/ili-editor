@@ -39,6 +39,7 @@
     "react-filepond": "^7.0.1",
     "react-functional-select": "^2.6.0",
     "react-icons": "^3.10.0",
+    "react-id-generator": "^3.0.1",
     "react-moment": "^0.9.7",
     "react-redux": "^7.2.0",
     "react-responsive-modal": "^5.0.2",

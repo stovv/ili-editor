@@ -16,7 +16,7 @@ import IliThemeProvider from "../../theme";
 import { RedactorTypogrphy } from './styles';
 import { getJwt } from "../../api/connector.react";
 import { BACKEND_URL, FilePondLocalization } from "../../constants";
-import { Headers, Loader, Typography, PopUp, Buttons, Toasts, ListBox } from '../../components';
+import { Headers, Loader, Typography, PopUp, Buttons, Toasts, ListBox, Forms } from '../../components';
 
 
 class EditPage extends React.Component{
@@ -26,6 +26,7 @@ class EditPage extends React.Component{
         this.state = {
             loading: true,
             files: null,
+            label: null,
             description: null,
             eventDate: new Date(),
             publishDate: new Date(),
@@ -53,6 +54,9 @@ class EditPage extends React.Component{
             this.setState({
                 loading: false,
                 files,
+                label: (this.props.draft && this.props.draft.title != null && this.props.draft.title.length > 0 )
+                    ? this.props.draft.title
+                    : null,
                 description: (this.props.draft && this.props.draft.description != null && this.props.draft.description.length > 0 )
                     ? this.props.draft.description
                     : null,
@@ -78,42 +82,50 @@ class EditPage extends React.Component{
 
     autoSave(){
         const { dispatch, editorState, stateMapping, match } = this.props;
-        const { isPost } = this.state;
+        const { isPost, label } = this.state;
 
         setTimeout(function () {
             if (this.editorInstance !== undefined &&
                 typeof this.editorInstance.save !== "undefined" && editorState === stateMapping.IN_SAVE){
-                this.editorInstance.save()
-                    .then(outputData => {
-                        console.log(outputData);
-                        if ( isPost ){
-                            dispatch(Redactor.updatePost(match.params.id, {
-                                blocks: outputData
-                            })).then(()=>{
+
+                if ( isPost ){
+                    this.editorInstance.save()
+                        .then(outputData => {
+                            dispatch(Redactor.updatePost(match.params.id, { blocks: outputData }))
+                                .then(()=>{
+                                    if ( this.props.editorState === stateMapping.IN_SAVE )
+                                        dispatch(Redactor.setRedactorSaved());
+                                });
+                        })
+                        .catch(reason=>{
+                            console.log('Error saving:', reason);
+                            dispatch(Redactor.setRedactorSaveError());
+                        });
+                    dispatch(Redactor.updatePost(match.params.id, { title: label }))
+                        .then(()=>{
+                            if ( this.props.editorState === stateMapping.IN_SAVE )
                                 dispatch(Redactor.setRedactorSaved());
-                            });
-                        }else{
-                            dispatch(Redactor.updateDraft(match.params.id, {
-                                blocks: outputData
-                            })).then(()=>{
+                        });
+                }else{
+                    this.editorInstance.save()
+                        .then(outputData => {
+                            dispatch(Redactor.updateDraft(match.params.id, { blocks: outputData }))
+                                .then(()=>{
+                                    if ( this.props.editorState === stateMapping.IN_SAVE )
+                                        dispatch(Redactor.setRedactorSaved());
+                                });
+                        })
+                        .catch(reason=>{
+                            console.log('Error saving:', reason);
+                            dispatch(Redactor.setRedactorSaveError());
+                        });
+                    dispatch(Redactor.updateDraft(match.params.id, { title: label }))
+                        .then(()=>{
+                            if ( this.props.editorState === stateMapping.IN_SAVE )
                                 dispatch(Redactor.setRedactorSaved());
-                            });
-                        }
-                    })
-                    .catch(reason=>{
-                        console.log('Error saving:', reason);
-                        dispatch(Redactor.setRedactorSaveError());
-                    })
-                // dispatch(Redactor.updateDraft(match.id, {
-                //         title: this.state.label
-                //     }
-                // )).then(response=>{
-                //     dispatch(Redactor.setRedactorSaved());
-                // })
-                    // .catch(reason=>{
-                    //     console.log("REASON", reason);
-                    //     this.setState({in_save: false});
-                    // })
+                        });
+                }
+
             }
             this.autoSave();
         }.bind(this), 3000);
@@ -273,6 +285,9 @@ class EditPage extends React.Component{
                                 }}
                                 onremovefile={(error, file)=>{
                                     dispatch(Redactor.addTempData('draftCover', undefined))
+                                    this.setState({
+                                        files: []
+                                    });
                                 }}
                                 name="files"
                                 {...FilePondLocalization}
@@ -391,6 +406,13 @@ class EditPage extends React.Component{
                             </Box>
                         </Flex>
                     </PopUp>
+                    <Box width="100%" mx="auto" maxWidth={"1000px"} px={"20px"}>
+                        <Forms.Inputs.TitleArea fixed placeholder="Заголовок" defaultValue={this.state.label}
+                                    onChange={(event) => {
+                                        dispatch(Redactor.setRedactorInSave());
+                                        this.setState({ label: event.target.value })
+                                    }}/>
+                    </Box>
                 </IliThemeProvider>
                 <div style={{
                     padding: "0 20px"

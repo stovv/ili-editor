@@ -142,16 +142,10 @@ export default {
                         });
                 },
                 async uploadByUrl(url){
-                    let imageFile = await File.getExternalImage(url);
-                    return File.uploadFile(imageFile)
-                        .then(response=>{
-                            return {
-                                success: 1,
-                                file: {
-                                    url: `${BACKEND_URL}${response.data[0].url}`,
-                                }
-                            };
-                        })
+                    return File.uploadFileByUrl(url)
+                        .then(response => {
+                            return response.data;
+                        });
                 }
             }
         },

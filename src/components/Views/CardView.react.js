@@ -19,7 +19,7 @@ class CardsView extends React.Component{
     }
 
     orderLines(){
-        const { drafts, theme, prefix, skipState, externalLink, withTime } = this.props;
+        const { drafts, theme, prefix, ...rest } = this.props;
         const { width } = this.state;
 
         if ( drafts == null ){
@@ -40,8 +40,7 @@ class CardsView extends React.Component{
                                 drafts.slice(i, i + sepCount).map((item, index)=>
                                     <React.Fragment key={index}>
                                         <Box width={1/sepCount} height="250px" >
-                                            <DraftCard draft={item} linkPrefix={prefix} skipState={skipState}
-                                                       externalLink={externalLink} withTime={withTime}/>
+                                            <DraftCard draft={item} linkPrefix={prefix} {...rest}/>
                                         </Box>
                                     </React.Fragment>
                                 )
@@ -51,16 +50,11 @@ class CardsView extends React.Component{
                 )
             }
         }else{
-            drafts.map((item, index) => {
-                items.push(
-                    <React.Fragment key={index}>
-                        <Box width={"100%"} px={"5px"} mx="auto" mb={theme.spacing.block} height="250px">
-                            <DraftCard draft={item} linkPrefix={prefix} skipState={skipState}
-                                       externalLink={externalLink} withTime={withTime}/>
-                        </Box>
-                    </React.Fragment>
-                );
-            })
+            items = drafts.map((item, index) => <React.Fragment key={index}>
+                <Box width={"100%"} px={"5px"} mx="auto" mb={theme.spacing.block} height="250px">
+                    <DraftCard draft={item} linkPrefix={prefix} {...rest}/>
+                </Box>
+            </React.Fragment>)
         }
         this.setState({ cards: items });
     }
@@ -116,7 +110,8 @@ CardsView.propTypes ={
     emptyMessage: PropTypes.string,
     skipState: PropTypes.bool,
     externalLink: PropTypes.bool,
-    withTime: PropTypes.bool
+    withTime: PropTypes.bool,
+    withAuthor: PropTypes.bool
 }
 
 

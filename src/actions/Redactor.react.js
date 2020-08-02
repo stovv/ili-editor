@@ -51,6 +51,11 @@ const updateDraftAction = (data) =>{
     };
 };
 
+const updateDraftErrorAction = {
+    type: STATE.SAVE_ERROR,
+    payload: null
+};
+
 const getRubricsAction = (data) =>{
     return {
         type: DATA.GET.RUBRICS,
@@ -166,7 +171,6 @@ export function openPost(postId){
 }
 
 export function updatePost(postId, data){
-    console.log("INPUT", data);
     return async dispatch => {
         await Redactor.updatePost(postId, data)
             .then(response=>{
@@ -174,7 +178,8 @@ export function updatePost(postId, data){
                 dispatch(updateDraftAction(response.data));
             })
             .catch(reason=>{
-                console.log(reason)
+                console.log("UPDATE POST ERROR:", reason);
+                dispatch(updateDraftErrorAction);
             });
     };
 }
@@ -185,6 +190,9 @@ export function updateDraft(draftId, data){
         await Redactor.updateDraft(draftId, data)
             .then(response=>{
                 dispatch(updateDraftAction(response.data));
+            }).catch(reason => {
+                console.log("UPDATE DRAFT ERROR:", reason);
+                dispatch(updateDraftErrorAction);
             });
     };
 }
@@ -215,10 +223,7 @@ export function setRedactorSaved(){
 
 export function setRedactorSaveError(){
     return async dispatch =>{
-        dispatch({
-            type: STATE.SAVE_ERROR,
-            payload: null
-        })
+        dispatch(updateDraftErrorAction)
     }
 }
 

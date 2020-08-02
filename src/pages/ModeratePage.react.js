@@ -20,7 +20,7 @@ class ModeratePage extends React.Component{
         const { moderation } = this.props;
 
         return (
-            <Views.CardsView prefix="/moderate/draft/" drafts={moderation} skipState emptyMessage={"Пока нет ни одного черновика на модерации"}/>
+            <Views.CardsView prefix="/moderate/draft/" drafts={moderation} skipState withAuthor emptyMessage={"Пока нет ни одного черновика на модерации"}/>
         );
     }
 }
