@@ -20,7 +20,7 @@ class AllPostsPage extends React.Component{
         const { posts } = this.props;
 
         return (
-            <Views.CardsView prefix="/edit/post/" drafts={posts} emptyMessage={'Пока нет ни одного поста'}/>
+            <Views.CardsView prefix="/edit/post/" withAuthor drafts={posts} emptyMessage={'Пока нет ни одного поста'}/>
         );
     }
 }

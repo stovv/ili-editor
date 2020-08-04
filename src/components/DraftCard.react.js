@@ -54,8 +54,8 @@ class DraftCard extends React.Component {
     }
 
     render() {
-        const { theme, linkPrefix, skipState, externalLink, withTime, withAuthor } = this.props;
-        const { id, cover, title, rubric, updated_at, state, publishDate, authors } = this.props.draft;
+        const { theme, linkPrefix, skipState, externalLink, withTime, withAuthor, slug: isSlug } = this.props;
+        const { id, slug, cover, title, rubric, updated_at, state, publishDate, authors } = this.props.draft;
 
         let bottomContent = (
             <>
@@ -141,7 +141,7 @@ class DraftCard extends React.Component {
                     <Box height={"100%"} sx={{position: "relative"}}>
                         {
                             (state !== "moderation" || skipState)
-                                ? <LinkComp to={`${linkPrefix}${id}`} externalLink={externalLink}>
+                                ? <LinkComp to={`${linkPrefix}${isSlug ? slug : id }`} externalLink={externalLink} slug={slug}>
                                     <Lazy cover={cover || EmptyCover}/>
                                 </LinkComp>
                                 : <Lazy cover={cover || EmptyCover}/>
@@ -151,7 +151,7 @@ class DraftCard extends React.Component {
                         }}>
                             {
                                 (state !== "moderation" || skipState)
-                                    ? <LinkComp to={`${linkPrefix}${id}`} externalLink={externalLink}>
+                                    ? <LinkComp to={`${linkPrefix}${isSlug ? slug : id }`} externalLink={externalLink} slug={slug}>
                                         {bottomContent}
                                     </LinkComp>
                                     : bottomContent
@@ -182,7 +182,8 @@ DraftCard.propTypes = {
     skipState: PropTypes.bool,
     externalLink: PropTypes.bool,
     withTime: PropTypes.bool,
-    withAuthor: PropTypes.bool
+    withAuthor: PropTypes.bool,
+    slug: PropTypes.bool
 }
 
 export default connect()(withTheme(DraftCard));

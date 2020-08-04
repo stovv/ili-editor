@@ -58,6 +58,7 @@ export async function getMyPosts(user_id, start, limit){
       posts( where: { authors: { id: ${user_id} } }, start: ${start}, limit: ${limit} ){
         id,
         title,
+        slug,
         updated_at,
         publish_at,
         created_at,
@@ -97,6 +98,11 @@ export async function getAllPosts(start, limit){
         updated_at,
         publish_at,
         created_at,
+        authors{
+            id,
+            name,
+            secondName
+        },
         cover{
             url,
             mime,

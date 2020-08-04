@@ -20,7 +20,7 @@ class PublicationsPage extends React.Component{
         const { published } = this.props;
 
         return (
-            <Views.CardsView prefix="https://dev.ili-nnov.ru/post/" externalLink drafts={published} emptyMessage={'Пока нет ни одной публикации'}/>
+            <Views.CardsView prefix="https://dev.ili-nnov.ru/" slug externalLink drafts={published} emptyMessage={'Пока нет ни одной публикации'}/>
         );
     }
 }

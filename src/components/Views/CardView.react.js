@@ -111,7 +111,8 @@ CardsView.propTypes ={
     skipState: PropTypes.bool,
     externalLink: PropTypes.bool,
     withTime: PropTypes.bool,
-    withAuthor: PropTypes.bool
+    withAuthor: PropTypes.bool,
+    slug: PropTypes.bool
 }
 
 
