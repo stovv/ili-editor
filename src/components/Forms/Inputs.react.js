@@ -56,36 +56,31 @@ export class TitleArea extends React.Component {
 
     constructor(props) {
         super(props);
+        const newLines = (props.defaultValue.match(/\n/g) || []).length;
         this.state={
-            idealHeight: 28,
-            lastScrollHeight: 28,
-            focused: false,
-            first: true
+            idealHeight: props.dryStart ? Math.ceil((props.defaultValue.length - newLines)/65*28) + newLines*28 : 28,
+            lastScrollHeight: props.dryStart ? Math.ceil((props.defaultValue.length - newLines)/65*28) + newLines*28 : 28,
+            focused: false
         }
+        this.TextAreaRef = React.createRef();
         this.inputId = nextId();
     }
 
-    shouldComponentUpdate(nextProps, nextState) {
-        /*console.log((nextProps.defaultValue !== this.props.defaultValue )||
-            nextState.idealHeight !== this.state.idealHeight ||
-            this.state.first || nextState.focused !== this.state.focused);*/
-        return true;
-    }
-
-    changeHeight = ref => {
-        this.TextAreaRef = ref;
+    componentDidMount() {
         this.forceUpdate();
     }
 
     render(){
+        const { withoutLabel,inverted, fontSizeIndex, outline, dryStart} = this.props;
+        const { focused } = this.state;
 
-        const { withoutLabel,inverted, fontSizeIndex, outline} = this.props;
-        if (this.TextAreaRef != null) {
-            this.TextAreaRef.style.height = '0px'; // This creates an inline style
-            let scrollHeight = this.TextAreaRef.scrollHeight;
-            const style = window.getComputedStyle(this.TextAreaRef);
-            this.TextAreaRef.removeAttribute('style'); // The inline style must be removed
-            this.state.idealHeight = scrollHeight;
+
+        if (this.TextAreaRef.current !== null && this.TextAreaRef.current.id === this.inputId && ( (focused && dryStart) || !dryStart ) ) {
+            this.TextAreaRef.current.style.height = '0px'; // This creates an inline style
+            let scrollHeight = this.TextAreaRef.current.scrollHeight;
+            const style = window.getComputedStyle(this.TextAreaRef.current);
+            this.TextAreaRef.current.removeAttribute('style'); // The inline style must be removed
+            this.state.idealHeight = scrollHeight
         }
 
         return(
@@ -99,6 +94,7 @@ export class TitleArea extends React.Component {
                     </Box>
                 }
                 <BlankInput
+                    ref={this.TextAreaRef}
                     id={this.inputId}
                     placeholder={this.props.placeholder}
                     value={this.props.defaultValue}
@@ -110,7 +106,6 @@ export class TitleArea extends React.Component {
                     inverted={inverted}
                     fontSizeIndex={fontSizeIndex}
                     outline={outline}
-                    ref={this.changeHeight}
                 />
             </Flex>
         );
@@ -122,4 +117,5 @@ TitleArea.propTypes = {
     withoutLabel: PropTypes.bool,
     inverted: PropTypes.bool,
     fontSizeIndex: PropTypes.number,
+    dryStart: PropTypes.bool
 }

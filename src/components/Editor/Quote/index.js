@@ -1,11 +1,12 @@
-import ReactDOM from "react-dom";
 import React from "react";
-import { ThemeProvider } from 'styled-components';
+import ReactDOM from "react-dom";
+import { Provider } from "react-redux";
 
-import { QuoteInput } from "./Quote.react";
-import { lightTheme } from "../../../theme/theme.react";
+import store from "../../../store";
+import QuoteInput from "./Quote.react";
+import IliThemeProvider from "../../../theme";
 
-// Class for EditorJS
+
 class QuoteEditor {
     static get toolbox() {
         return {
@@ -87,9 +88,11 @@ class QuoteEditor {
 
     render(){
         const component = (
-            <ThemeProvider theme={lightTheme}>
-                <QuoteInput input data={this.data}/>
-            </ThemeProvider>
+            <Provider store={store}>
+                <IliThemeProvider>
+                    <QuoteInput input data={this.data}/>
+                </IliThemeProvider>
+            </Provider>
         );
         const el = document.createElement("div");
         ReactDOM.render(component, el);

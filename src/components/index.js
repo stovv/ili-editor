@@ -8,13 +8,13 @@ import PrivateRoute from "./PrivateRoute.react";
 import SideContainer from "./SideBarContainer.react";
 
 
-
 import * as Forms from './Forms';
 import * as Views from './Views';
 import * as Images from './Images';
 import * as Toasts from './Toasts';
 import * as Headers from './Headers';
 import * as Buttons from './Buttons';
+import * as EditorTools from './Editor';
 import * as Common from './Common.react';
 import * as MenuContents from './MenuContent';
 import * as Typography from "./Typography.react";
@@ -34,6 +34,7 @@ export {
     DraftCard,
     InputsBox,
     Typography,
+    EditorTools,
     MenuContents,
     PrivateRoute,
     SideContainer

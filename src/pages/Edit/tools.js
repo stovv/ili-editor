@@ -14,7 +14,7 @@ import createGenericInlineTool, {
     UnderlineInlineTool,
 } from 'editorjs-inline-tool';
 
-//import { EditorComponents } from '../components';
+import { Quote } from '../../components/Editor';
 
 import { File } from '../../api'
 import { BACKEND_URL } from '../../constants';
@@ -25,10 +25,10 @@ export default {
     //     class: EditorComponents.CalloutEditor,
     //     shortcut: 'CMD+ALT+C'
     // },
-    // quote: {
-    //     class: EditorComponents.QuoteEditor,
-    //     shortcut: 'CMD+ALT+Q'
-    // },
+    quote: {
+        class: Quote,
+        shortcut: 'CMD+ALT+Q'
+    },
     header: {
         class: Header,
         config: {

@@ -77,7 +77,6 @@ class EditPage extends React.Component{
             dispatch(Redactor.openDraft(match.params.id))
                 .then(()=>action());
         }
-
         this.autoSave();
     }
 
