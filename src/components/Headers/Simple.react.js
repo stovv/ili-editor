@@ -3,15 +3,15 @@ import PropTypes from "prop-types";
 import { Flex, Box } from 'rebass';
 import { connect } from "react-redux";
 import { FiPlus } from "react-icons/fi";
-import { withRouter } from "react-router-dom";
 import { withTheme } from "styled-components";
+import { withRouter } from "react-router-dom";
 
 import { Typography } from '../index';
-import { BACKEND_URL } from "../../constants";
 import { Hamburger } from "../../assets";
-import { Separator, Avatar } from "../Common.react";
 import { IconContext } from "react-icons";
 import { Redactor } from "../../actions";
+import { Separator, Avatar } from "../Common.react";
+import {BACKEND_URL, EmptyCover} from "../../constants";
 
 
 class SimpleHeader extends React.Component {
@@ -61,7 +61,7 @@ class SimpleHeader extends React.Component {
                         {
                             avatar !== undefined &&
                             <Box my={"auto"}>
-                                <Avatar src={`${BACKEND_URL}${avatar.formats.thumbnail.url}`}/>
+                                <Avatar src={avatar !== null ? `${BACKEND_URL}${avatar.formats.thumbnail.url}` : `${BACKEND_URL}${EmptyCover.formats.thumbnail.url}`} />
                             </Box>
                         }
                         </Flex>

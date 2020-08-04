@@ -3,13 +3,12 @@ import {Flex, Box } from 'rebass';
 import { connect } from "react-redux";
 import { withTheme } from "styled-components";
 
-import { BACKEND_URL } from "../../constants";
 import { Logo } from "../../assets";
-import { Separator, Avatar } from "../Common.react";
-import SimpleButton from "../Buttons/Simple.react";
-import { XSmall } from "../Typography.react";
 import {Redactor} from "../../actions";
-import {STATE} from "../../store/redactor/types.react";
+import { XSmall } from "../Typography.react";
+import SimpleButton from "../Buttons/Simple.react";
+import { Separator, Avatar } from "../Common.react";
+import {BACKEND_URL, EmptyCover} from "../../constants";
 
 
 const RedactorLogo=({theme, typeHeader})=>(
@@ -95,7 +94,7 @@ class EditorHeader extends React.Component {
                         {
                             avatar !== undefined &&
                             <Box my={"auto"}>
-                                <Avatar src={`${BACKEND_URL}${avatar.formats.thumbnail.url}`}/>
+                                <Avatar src={avatar !== null ? `${BACKEND_URL}${avatar.formats.thumbnail.url}` : `${BACKEND_URL}${EmptyCover.formats.thumbnail.url}`} />
                             </Box>
                         }
                     </Flex>
