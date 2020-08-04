@@ -28,7 +28,8 @@ export const MODERATION = {
 
 export const DATA = {
   GET: {
-      RUBRICS: "GET_RUBRICS_DATA"
+      RUBRICS: "GET_RUBRICS_DATA",
+      USERS: "GET_USERS_DATA"
   }
 };
 

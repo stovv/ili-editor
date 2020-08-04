@@ -1,6 +1,7 @@
 import PopUp from "./Popup.react";
 import Loader from './Loader.react';
 import ListBox from "./ListBox.react";
+import InputsBox from "./InputsBox.react";
 import DraftCard from "./DraftCard.react";
 import Header from "./Headers/Simple.react";
 import PrivateRoute from "./PrivateRoute.react";
@@ -31,6 +32,7 @@ export {
     Headers,
     Buttons,
     DraftCard,
+    InputsBox,
     Typography,
     MenuContents,
     PrivateRoute,

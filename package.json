@@ -26,6 +26,7 @@
     "filepond": "^4.19.2",
     "filepond-plugin-image-exif-orientation": "^1.0.9",
     "filepond-plugin-image-preview": "^4.6.4",
+    "generate-password": "^1.5.1",
     "lodash.throttle": "^4.1.1",
     "moment": "^2.27.0",
     "node-sass": "^4.14.1",
@@ -55,7 +56,8 @@
     "redux-logger": "^3.0.6",
     "redux-thunk": "^2.3.0",
     "styled-components": "^5.1.1",
-    "toasted-notes": "^3.2.0"
+    "toasted-notes": "^3.2.0",
+    "transliter": "^2.2.1"
   },
   "scripts": {
     "start": "react-scripts start",

@@ -63,6 +63,13 @@ const getRubricsAction = (data) =>{
     };
 };
 
+const getUsersAction = (data) =>{
+    return {
+        type: DATA.GET.USERS,
+        payload: data
+    };
+};
+
 const closeDraftAction = {
     type: DRAFT.CLOSE,
     payload: null
@@ -112,6 +119,18 @@ export function getRubrics(){
         await Public.getRubrics()
             .then(response=>{
                 dispatch(getRubricsAction(response.data));
+            })
+            .catch(reason=>{
+                console.log(reason);
+            })
+    };
+}
+
+export function getUsers(skipIds){
+    return async dispatch => {
+        await Redactor.getAllUsers(skipIds)
+            .then(response=>{
+                dispatch(getUsersAction(response.data.users));
             })
             .catch(reason=>{
                 console.log(reason);

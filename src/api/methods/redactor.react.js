@@ -1,5 +1,8 @@
 import api, { getJwt } from "../connector.react";
 
+const { slugify } = require('transliter');
+const passGenerator = require('generate-password');
+
 export async function getDraft(id){
     const jwt = getJwt();
     return api.get(`/drafts/${id}`,{
@@ -106,4 +109,43 @@ export async function getAllPosts(start, limit){
       }
     }
     `);
+}
+
+export async function getAllUsers(skipIds){
+    const jwt = getJwt();
+    return api.ql(`
+    query {
+      users(where: { id_nin: [${skipIds}] }){
+        id,
+        name,
+        secondName
+      }
+    }
+    `, null, {
+        headers: { 'Authorization': `Bearer ${jwt}`}
+    });
+}
+
+export async function createUser(name, secondName, roleId){
+    const jwt = getJwt();
+    let emailName = slugify(`${name}.${secondName}`, '_');
+    console.log("EMAIL", emailName);
+    return api.post('/auth/local/register', {
+        "username": `${emailName}@ili-nnov.ru`,
+        "email": `${emailName}@ili-nnov.ru`,
+        "password": passGenerator.generate({
+            length: 13,
+            numbers: true,
+            symbols: true,
+            uppercase: true,
+            lowercase: true,
+            excludeSimilarCharacters: true
+        }),
+        "confirmed": true,
+        "role": roleId,
+        "name": name,
+        "secondName": secondName
+    }, null, {
+        headers: { 'Authorization': `Bearer ${jwt}`}
+    })
 }

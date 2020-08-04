@@ -12,11 +12,12 @@ import { withRouter } from 'react-router-dom';
 import Tools from './tools';
 import InitialData from './initialData';
 import { Redactor } from "../../actions";
+import { Redactor as RedactorAPI } from '../../api';
 import IliThemeProvider from "../../theme";
 import { RedactorTypogrphy } from './styles';
 import { getJwt } from "../../api/connector.react";
 import { BACKEND_URL, FilePondLocalization } from "../../constants";
-import { Headers, Loader, Typography, PopUp, Buttons, Toasts, ListBox, Forms } from '../../components';
+import { Headers, Loader, Typography, PopUp, Buttons, Toasts, ListBox, Forms, InputsBox } from '../../components';
 
 
 class EditPage extends React.Component{
@@ -27,7 +28,7 @@ class EditPage extends React.Component{
             loading: true,
             files: null,
             label: null,
-            description: null,
+            description: "",
             eventDate: new Date(),
             publishDate: new Date(),
             isModeration: this.props.match.url.includes('moderate'),
@@ -136,11 +137,13 @@ class EditPage extends React.Component{
             || this.props.tmpCover !== nextProps.tmpCover
             || this.state.files !== nextProps.files
             || this.props.tmpRubric !== nextProps.tmpRubric
-            || this.state.eventDate !== nextState.eventDate;
+            || this.state.eventDate !== nextState.eventDate
+            || this.props.tmpUser !== nextProps.tmpUser
+            || this.props.tmpAuthors !== nextProps.tmpAuthors;
     }
 
-    sendDraftTo(to){
-        const { match, dispatch, tmpCover, tmpRubric, draft, history } = this.props;
+    async sendDraftTo(to){
+        const { match, dispatch, tmpCover, tmpRubric, tmpUser, tmpAuthors, draft, history } = this.props;
         const { description, eventDate, publishDate } = this.state;
 
         this.setState({loading: true});
@@ -160,6 +163,28 @@ class EditPage extends React.Component{
             nData.isEvent = true;
             nData.eventDate = eventDate;
         }
+
+        if ( tmpUser !== undefined ){
+            await RedactorAPI.createUser(tmpUser.name, tmpUser.secondName, 15)
+                .then(response=>{
+                    console.log(response.data);
+                    if ( tmpAuthors !== undefined ){
+                        nData.authors = [
+                            ...tmpAuthors.map(author=>author.id),
+                            response.data.user.id
+                        ]
+                    }else{
+                        nData.authors = [
+                            ...draft.authors.map(author=>author.id),
+                            response.data.user.id
+                        ]
+                    }
+                })
+        }else if ( tmpAuthors !== undefined ){
+            nData.authors = tmpAuthors.map(author=>author.id)
+        }
+
+        console.log(nData.authors);
 
         if ( to === "publication" ){
             nData.publishDate = publishDate;
@@ -183,13 +208,15 @@ class EditPage extends React.Component{
 
     render() {
         const { loading, files, isModeration, isPost } = this.state;
-        const { dispatch, tmpCover, tmpRubric } = this.props;
+        const { dispatch, tmpCover, tmpRubric, tmpUser, tmpAuthors } = this.props;
         const { blocks } = this.props.draft;
 
         if ( loading ){
             return <IliThemeProvider><Loader/></IliThemeProvider>
         }
 
+        const alreadyAuthorsExists = !(tmpAuthors !== undefined && tmpAuthors.length === 0);
+        const newAuthorExists = !(tmpUser === undefined || Object.keys(tmpUser).length < 2 || Object.keys(tmpUser).some(key => tmpUser[key].length === 0))
         return (
             <>
                 <RedactorTypogrphy/>
@@ -363,13 +390,7 @@ class EditPage extends React.Component{
                                 <Buttons.Simple inactive={(this.state.description === null ||
                                 this.state.description.length < 10) ||
                                 (tmpRubric === undefined || tmpRubric === null)}
-                                                onClick={()=>{
-                                                    if (isModeration){
-                                                        dispatch(Redactor.openPopUp(3))
-                                                    }else{
-                                                        this.sendDraftTo(isPost ? null : "moderation")
-                                                    }
-                                                }}
+                                                onClick={()=>{dispatch(Redactor.openPopUp(3))}}
                                                 onInactiveClick={() => {
                                                     toaster.notify(({ onClose }) => (
                                                             <Toasts.WithEmoji onClose={onClose}>
@@ -377,11 +398,58 @@ class EditPage extends React.Component{
                                                             </Toasts.WithEmoji>
                                                         ), { position: "bottom-right"}
                                                     );
-                                                }}>{isModeration ? "Дальше" : "Отправить"}</Buttons.Simple>
+                                                }}>Дальше</Buttons.Simple>
                             </Box>
                         </Flex>
                     </PopUp>
                     <PopUp pid={3} title={
+                        isModeration || isPost
+                            ? "Прежде чем опубликовать"
+                            : "Прежде чем отправить на модерацию"
+
+                    }>
+                        <Box my={"30px"}>
+                            <Typography.Small weight={400}>{
+                                isModeration || isPost
+                                    ? "Проверьте авторов"
+                                    : "Можно добавить автора"
+                            }</Typography.Small>
+                            {
+                                (!isModeration && !isPost) &&
+                                <Typography.XSmall weight={400}>Например если вы отредактировали/добавили пост написанный не вами</Typography.XSmall>
+                            }
+                            <ListBox listType={"authors"} initialValue={this.props.draft.authors}/>
+                            <Typography.Small margin="20px 0" weight={400}>Не нашли автора? создайте нового!</Typography.Small>
+                            <InputsBox inputType={"newUser"}/>
+                        </Box>
+                        <Flex justifyContent={"space-between"}>
+                            <Box width={1/5}/>
+                            <Box width={1/5}>
+                                <Buttons.Simple
+                                    inactive={!alreadyAuthorsExists && !newAuthorExists}
+                                    onInactiveClick={() => {
+                                        toaster.notify(({ onClose }) => (
+                                                <Toasts.WithEmoji onClose={onClose}>
+                                                    {
+                                                        (!alreadyAuthorsExists && !newAuthorExists)
+                                                            && "⚠ Введите хотябы одного автора"
+                                                    }
+                                                </Toasts.WithEmoji>
+                                            ), { position: "bottom-right"}
+                                        );
+                                    }}
+                                    onClick={()=>{
+                                        if (isModeration){
+                                            dispatch(Redactor.openPopUp(4))
+                                        }else{
+                                            this.sendDraftTo(isPost ? null : "moderation")
+                                        }}}>
+                                    {isModeration ? "Дальше" : "Отправить"}
+                                </Buttons.Simple>
+                            </Box>
+                        </Flex>
+                    </PopUp>
+                    <PopUp pid={4} title={
                         isModeration || isPost
                             ? "Прежде чем опубликовать"
                             : "Прежде чем отправить на модерацию"
@@ -437,7 +505,9 @@ function mapStateToProps(state) {
         editorState: state.redactor.editorState,
         draft: state.redactor.draft,
         tmpCover: state.redactor.tmp.draftCover,
-        tmpRubric: state.redactor.tmp.rubric
+        tmpRubric: state.redactor.tmp.rubric,
+        tmpUser: state.redactor.tmp.newUser,
+        tmpAuthors: state.redactor.tmp.authors
     }
 }
 

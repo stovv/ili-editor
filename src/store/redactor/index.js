@@ -11,6 +11,7 @@ let initialState = {
     popUpId: 1,
     tmp: {},
     rubric: [],
+    authors: [],
     editorStateMapping: STATE
 }
 
@@ -113,6 +114,12 @@ function RedactorReducer(state = initialState, action){
             return {
                 ...state,
                 rubric: action.payload
+            }
+        }
+        case DATA.GET.USERS:{
+            return {
+                ...state,
+                authors: action.payload
             }
         }
         case DRAFT.SCHEDULED:{
