@@ -19,6 +19,7 @@ class QuoteEditor {
         //console.log("DATA", data);
         this.data = {
             text: data.text || '',
+            height: data.height || 54,
             type: data.type || "1"
         }
         this.tunes = [];
@@ -102,6 +103,7 @@ class QuoteEditor {
     save(blockContent){
         return{
             text: blockContent.querySelector('textarea').value || "",
+            height: blockContent.querySelector('textarea').clientHeight || 54,
             type: this.data.type,
         }
     }

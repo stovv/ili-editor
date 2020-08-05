@@ -13,11 +13,13 @@ const BlankInput = styled.textarea`
     resize: none;
     height: ${props=> props.idealHeight};
     font-size: ${props=> props.fontSizeIndex ? (props.theme.fontSizes[props.fontSizeIndex] ? props.theme.fontSizes[props.fontSizeIndex] : props.theme.fontSizes[9]) : props.theme.fontSizes[9]};
-    color: ${props => props.inverted ? props.theme.text.onPrimary : props.theme.text.primary };
+    color: ${props => props.textColor ? props.textColor : (props.inverted ? props.theme.text.onPrimary : props.theme.text.primary) };
     background-color: ${props => props.inverted ? 'transparent' : props.theme.colors.secondary};
-    font-weight: 500;
+    font-weight: ${props => props.textWeight ? props.textWeight : 500};
     width: 100%;
     word-break: break-word;
+    font-style: ${props => props.textStyle ? props.textStyle : "unset"};
+    text-align: ${props => props.align ? props.align : "left"};
     ${({outline}) => outline
     ? `
           border: 1px solid ${outline};
@@ -56,10 +58,9 @@ export class TitleArea extends React.Component {
 
     constructor(props) {
         super(props);
-        const newLines = (props.defaultValue.match(/\n/g) || []).length;
         this.state={
-            idealHeight: props.dryStart ? Math.ceil((props.defaultValue.length - newLines)/65*28) + newLines*28 : 28,
-            lastScrollHeight: props.dryStart ? Math.ceil((props.defaultValue.length - newLines)/65*28) + newLines*28 : 28,
+            idealHeight: props.dryStart && props.defaultHeight !== undefined ? props.defaultHeight : 72,
+            lastScrollHeight: props.dryStart && props.defaultHeight !== undefined ? props.defaultHeight : 72,
             focused: false
         }
         this.TextAreaRef = React.createRef();
@@ -71,8 +72,9 @@ export class TitleArea extends React.Component {
     }
 
     render(){
-        const { withoutLabel,inverted, fontSizeIndex, outline, dryStart} = this.props;
-        const { focused } = this.state;
+        const { withoutLabel,inverted, align, onChange, fontSizeIndex, textColor, textStyle, textWeight,
+            outline, dryStart, focusedOutline, defaultValue, placeholder} = this.props;
+        const { focused, idealHeight } = this.state;
 
 
         if (this.TextAreaRef.current !== null && this.TextAreaRef.current.id === this.inputId && ( (focused && dryStart) || !dryStart ) ) {
@@ -81,6 +83,7 @@ export class TitleArea extends React.Component {
             const style = window.getComputedStyle(this.TextAreaRef.current);
             this.TextAreaRef.current.removeAttribute('style'); // The inline style must be removed
             this.state.idealHeight = scrollHeight
+            console.log("Force updated", this.inputId, idealHeight)
         }
 
         return(
@@ -96,16 +99,20 @@ export class TitleArea extends React.Component {
                 <BlankInput
                     ref={this.TextAreaRef}
                     id={this.inputId}
-                    placeholder={this.props.placeholder}
-                    value={this.props.defaultValue}
-                    onChange={this.props.onChange}
-                    idealHeight={this.state.idealHeight + 'px'}
+                    placeholder={placeholder}
+                    value={defaultValue}
+                    onChange={onChange}
+                    idealHeight={idealHeight + 'px'}
                     onFocus={()=>this.setState({focused: true})}
                     onBlur={()=>this.setState({focused: false})}
                     label={!withoutLabel}
                     inverted={inverted}
+                    align={align}
+                    textStyle={textStyle}
+                    textColor={textColor}
+                    textWeight={textWeight}
                     fontSizeIndex={fontSizeIndex}
-                    outline={outline}
+                    outline={ focusedOutline ? ( focused ? outline : undefined) : outline}
                 />
             </Flex>
         );
@@ -117,5 +124,15 @@ TitleArea.propTypes = {
     withoutLabel: PropTypes.bool,
     inverted: PropTypes.bool,
     fontSizeIndex: PropTypes.number,
-    dryStart: PropTypes.bool
+    dryStart: PropTypes.bool,
+    focusedOutline: PropTypes.bool,
+    outline: PropTypes.string,
+    onChange: PropTypes.func,
+    placeholder: PropTypes.string,
+    defaultValue: PropTypes.string,
+    align: PropTypes.string,
+    textStyle: PropTypes.string,
+    textColor: PropTypes.string,
+    textWeight: PropTypes.number,
+    defaultHeight: PropTypes.number,
 }
