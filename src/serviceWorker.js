@@ -80,7 +80,7 @@ function registerValidSW(swUrl, config) {
               );
               toaster.notify(({ onClose }) => (
                       <Toasts.WithEmoji onClose={()=>{
-                        location.reload(true);
+                        window.location.href = window.location.href;
                         onClose()
                       }} color={"#ffffff"} textColor={"#4a4a4a"}>
                         Доступна новая версия! 🚀 <br/>
