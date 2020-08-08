@@ -50,6 +50,7 @@ class SideContainer extends React.Component {
     }
 
     componentDidMount() {
+        document.documentElement.removeAttribute("style");
         window.addEventListener('resize', this.handleWindowResize);
     }
 

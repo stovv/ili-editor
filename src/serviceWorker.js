@@ -80,11 +80,11 @@ function registerValidSW(swUrl, config) {
               );
               toaster.notify(({ onClose }) => (
                       <Toasts.WithEmoji onClose={()=>{
-                        window.location.reload(true);
+                        location.reload(true);
                         onClose()
                       }} color={"#ffffff"} textColor={"#4a4a4a"}>
                         Доступна новая версия! 🚀 <br/>
-                        Нажмите для перезагрузки приложения 😊
+                        Закройте все окна редактора, и откройте заного
                       </Toasts.WithEmoji>
                   ), { position: "top-right", duration: null }
               );

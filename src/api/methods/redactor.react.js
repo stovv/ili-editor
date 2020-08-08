@@ -135,7 +135,6 @@ export async function getAllUsers(skipIds){
 export async function createUser(name, secondName, roleId){
     const jwt = getJwt();
     let emailName = slugify(`${name}.${secondName}`, '_');
-    console.log("EMAIL", emailName);
     return api.post('/auth/local/register', {
         "username": `${emailName}@ili-nnov.ru`,
         "email": `${emailName}@ili-nnov.ru`,

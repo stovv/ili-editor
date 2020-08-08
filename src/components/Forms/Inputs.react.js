@@ -48,7 +48,7 @@ const Label = styled.span`
     font-size: ${props=> props.theme.fontSizes[1]};
     font-weight: normal;
     font-stretch: normal;
-    font-style: normal;
+    font-style: normal;s
     line-height: 1.32;
     letter-spacing: normal;
 `;
@@ -83,7 +83,6 @@ export class TitleArea extends React.Component {
             const style = window.getComputedStyle(this.TextAreaRef.current);
             this.TextAreaRef.current.removeAttribute('style'); // The inline style must be removed
             this.state.idealHeight = scrollHeight
-            console.log("Force updated", this.inputId, idealHeight)
         }
 
         return(

@@ -138,7 +138,8 @@ class EditPage extends React.Component{
             || this.props.tmpRubric !== nextProps.tmpRubric
             || this.state.eventDate !== nextState.eventDate
             || this.props.tmpUser !== nextProps.tmpUser
-            || this.props.tmpAuthors !== nextProps.tmpAuthors;
+            || this.props.tmpAuthors !== nextProps.tmpAuthors
+            || this.props.tmpEventSettings !== nextProps.tmpEventSettings;
     }
 
     async sendDraftTo(to){
@@ -157,10 +158,15 @@ class EditPage extends React.Component{
             if(tmpRubric.withEventDate){
                 nData.isEvent = true;
                 nData.eventDate = eventDate;
+            }else{
+                nData.isEvent = false;
             }
         }else if (draft.rubric.withEventDate)  {
+            nData.rubric = draft.rubric.id;
             nData.isEvent = true;
             nData.eventDate = eventDate;
+        }else{
+            nData.isEvent = false;
         }
 
         if ( tmpUser !== undefined ){
@@ -182,8 +188,6 @@ class EditPage extends React.Component{
         }else if ( tmpAuthors !== undefined ){
             nData.authors = tmpAuthors.map(author=>author.id)
         }
-
-        console.log(nData.authors);
 
         if ( to === "publication" ){
             nData.publishDate = publishDate;
@@ -207,7 +211,7 @@ class EditPage extends React.Component{
 
     render() {
         const { loading, files, isModeration, isPost } = this.state;
-        const { dispatch, tmpCover, tmpRubric, tmpUser, tmpAuthors } = this.props;
+        const { dispatch, tmpCover, tmpRubric, tmpUser, tmpAuthors, tmpEventSettings } = this.props;
         const { blocks } = this.props.draft;
 
         if ( loading ){
@@ -216,6 +220,17 @@ class EditPage extends React.Component{
 
         const alreadyAuthorsExists = !(tmpAuthors !== undefined && tmpAuthors.length === 0);
         const newAuthorExists = !(tmpUser === undefined || Object.keys(tmpUser).length < 2 || Object.keys(tmpUser).some(key => tmpUser[key].length === 0))
+
+        const descriptionExists = (this.state.description !== null && this.state.description.length >= 10);
+        const rubricExists = (tmpRubric != null);
+        const isEvent = (rubricExists && tmpRubric.withEventDate);
+        const eventSettingsFilled = (isEvent && tmpEventSettings !== undefined
+            && (tmpEventSettings.eventLink !== undefined && tmpEventSettings.eventLink.length > 0)
+            && (tmpEventSettings.eventLocation !== undefined && tmpEventSettings.eventLocation.length > 0)
+            && (tmpEventSettings.eventPrice !== undefined && tmpEventSettings.eventPrice.length > 0));
+
+        console.log(tmpEventSettings.eventLocation, tmpEventSettings.eventPrice, tmpEventSettings.eventLink);
+
         return (
             <>
                 <RedactorTypogrphy/>
@@ -344,7 +359,7 @@ class EditPage extends React.Component{
                         <Box my={"30px"}>
                             <Typography.Small weight={400}>{
                                 isModeration || isPost
-                                    ? "2. Удтверите или поменяйте рубрику"
+                                    ? "2. Удтвердите или поменяйте рубрику"
                                     : "2. Выберете рубрику"
                             }</Typography.Small>
                             <ListBox listType={"rubric"} initialValue={this.props.draft.rubric ? this.props.draft.rubric: undefined}/>
@@ -364,31 +379,37 @@ class EditPage extends React.Component{
                             }} onChange={(e)=>this.setState({description: e.target.value})}/>
                         </Box>
                         {
-                            (tmpRubric !== undefined && tmpRubric !== null && tmpRubric.withEventDate)
-                                && <Box mb={"30px"}>
+                            isEvent &&
+                                <Box mb={"30px"}>
                                     <Typography.Small weight={400}>{
                                         isModeration || isPost
-                                            ? "4. Проверьте дату события"
-                                            : "4. Добавьте дату события"
+                                            ? "4. Проверьте событие"
+                                            : "4. Настройте событие"
                                     }</Typography.Small>
-                                    <DatePicker
-                                        selected={this.state.eventDate}
-                                        onChange={date => this.setState({
-                                            eventDate: date
-                                        })}
-                                        timeInputLabel="Time:"
-                                        dateFormat="MM/dd/yyyy H:mm"
-                                        showTimeInput
-                                    />
+                                    <Flex>
+                                        <Typography.XSmall margin="0 20px 0 0" weight={400}>Когда</Typography.XSmall>
+                                        <DatePicker
+                                            selected={this.state.eventDate}
+                                            onChange={date => this.setState({
+                                                eventDate: date
+                                            })}
+                                            timeInputLabel="Time:"
+                                            dateFormat="MM/dd/yyyy H:mm"
+                                            showTimeInput
+                                        />
+                                    </Flex>
+                                    <InputsBox inputType={"eventSettings"}/>
                                 </Box>
                         }
 
                         <Flex justifyContent={"space-between"}>
-                            <Box width={1/5}/>
                             <Box width={1/5}>
-                                <Buttons.Simple inactive={(this.state.description === null ||
-                                this.state.description.length < 10) ||
-                                (tmpRubric === undefined || tmpRubric === null)}
+                                <Buttons.Simple outline onClick={()=>{dispatch(Redactor.openPopUp(1))}}>
+                                    Назад
+                                </Buttons.Simple>
+                            </Box>
+                            <Box width={1/5}>
+                                <Buttons.Simple inactive={!descriptionExists || !rubricExists || (isEvent && !eventSettingsFilled)}
                                                 onClick={()=>{dispatch(Redactor.openPopUp(3))}}
                                                 onInactiveClick={() => {
                                                     toaster.notify(({ onClose }) => (
@@ -506,7 +527,12 @@ function mapStateToProps(state) {
         tmpCover: state.redactor.tmp.draftCover,
         tmpRubric: state.redactor.tmp.rubric,
         tmpUser: state.redactor.tmp.newUser,
-        tmpAuthors: state.redactor.tmp.authors
+        tmpAuthors: state.redactor.tmp.authors,
+        tmpEventSettings: state.redactor.tmp.eventSettings || {
+            eventLocation: "",
+            eventPrice: "",
+            eventLink: ""
+        }
     }
 }
 

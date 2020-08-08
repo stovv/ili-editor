@@ -34,6 +34,29 @@ class InputsBox extends React.Component{
                 }
                 break;
             }
+            case "eventSettings":{
+                this.state = {
+                    ...this.state,
+                    eventLocation : "",
+                    eventLink: "",
+                    eventPrice: "",
+                    eventSettings: [
+                        {
+                            type: 'eventLocation',
+                            placeholder: 'Где'
+                        },
+                        {
+                            type: 'eventPrice',
+                            placeholder:'Цена'
+                        },
+                        {
+                            type: 'eventLink',
+                            placeholder:'Ссылка'
+                        }
+                    ]
+                }
+                break;
+            }
             default: return;
         }
         this.autoSave = this.autoSave.bind(this);
@@ -105,6 +128,7 @@ function mapStateToProps(state){
 InputsBox.propTypes ={
     inputType: PropTypes.oneOf([
         "newUser",
+        "eventSettings"
     ]).isRequired
 }
 
