@@ -143,7 +143,7 @@ class EditPage extends React.Component{
     }
 
     async sendDraftTo(to){
-        const { match, dispatch, tmpCover, tmpRubric, tmpUser, tmpAuthors, draft, history } = this.props;
+        const { match, dispatch, tmpCover, tmpRubric, tmpUser, tmpAuthors, draft, tmpEventSettings, history } = this.props;
         const { description, eventDate, publishDate } = this.state;
 
         this.setState({loading: true});
@@ -158,6 +158,9 @@ class EditPage extends React.Component{
             if(tmpRubric.withEventDate){
                 nData.isEvent = true;
                 nData.eventDate = eventDate;
+                nData.eventLink = tmpEventSettings.eventLink;
+                nData.eventLocation = tmpEventSettings.eventLocation;
+                nData.eventPrice = tmpEventSettings.eventPrice;
             }else{
                 nData.isEvent = false;
             }
@@ -165,6 +168,14 @@ class EditPage extends React.Component{
             nData.rubric = draft.rubric.id;
             nData.isEvent = true;
             nData.eventDate = eventDate;
+            if (tmpEventSettings != null
+                && tmpEventSettings.eventLink.length > 0
+                && tmpEventSettings.eventLocation.length > 0
+                && tmpEventSettings.eventPrice.length > 0){
+                nData.eventLink = tmpEventSettings.eventLink;
+                nData.eventLocation = tmpEventSettings.eventLocation;
+                nData.eventPrice = tmpEventSettings.eventPrice;
+            }
         }else{
             nData.isEvent = false;
         }
@@ -398,7 +409,11 @@ class EditPage extends React.Component{
                                             showTimeInput
                                         />
                                     </Flex>
-                                    <InputsBox inputType={"eventSettings"}/>
+                                    <InputsBox inputType={"eventSettings"} defaultValue={{
+                                        eventLink: this.props.draft.eventLink,
+                                        eventPrice: this.props.draft.eventPrice,
+                                        eventLocation: this.props.draft.eventLocation
+                                    }}/>
                                 </Box>
                         }
 

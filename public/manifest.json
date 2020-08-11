@@ -3,7 +3,7 @@
   "name": "ИЛИ Редактор",
   "lang": "ru",
   "description": "Редактируй или создавай посты для молодежного журнала",
-  "start_url": "https://editor.ili-nnov.ru",
+  "start_url": "%PUBLIC_URL%",
   "background_color": "#eb5757",
   "theme_color": "#eb5757",
   "dir": "ltr",

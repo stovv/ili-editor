@@ -193,6 +193,7 @@ export function updatePost(postId, data){
     return async dispatch => {
         await Redactor.updatePost(postId, data)
             .then(response=>{
+                console.log(response.data)
                 dispatch(updateDraftAction(response.data));
             })
             .catch(reason=>{
@@ -208,6 +209,7 @@ export function updateDraft(draftId, data){
         console.log(data);
         await Redactor.updateDraft(draftId, data)
             .then(response=>{
+                console.log(response.data)
                 dispatch(updateDraftAction(response.data));
             }).catch(reason => {
                 console.log("UPDATE DRAFT ERROR:", reason);

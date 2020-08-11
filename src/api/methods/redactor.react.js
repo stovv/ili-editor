@@ -89,7 +89,7 @@ export async function getScheduledPosts(){
 export async function getAllPosts(start, limit){
     return api.ql(`
     query{
-      posts( start: ${start}, limit: ${limit} ){
+      posts( start: ${start}, limit: ${limit}, sort: "publish_at:DESC" ){
         id,
         title,
         rubric {

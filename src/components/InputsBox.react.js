@@ -37,9 +37,9 @@ class InputsBox extends React.Component{
             case "eventSettings":{
                 this.state = {
                     ...this.state,
-                    eventLocation : "",
-                    eventLink: "",
-                    eventPrice: "",
+                    eventLocation : props.defaultValue.eventLocation ? props.defaultValue.eventLocation : "",
+                    eventLink: props.defaultValue.eventLink ? props.defaultValue.eventLink : "",
+                    eventPrice: props.defaultValue.eventPrice ? props.defaultValue.eventPrice : "",
                     eventSettings: [
                         {
                             type: 'eventLocation',
@@ -55,24 +55,17 @@ class InputsBox extends React.Component{
                         }
                     ]
                 }
+                props.dispatch(Redactor.addTempData("eventSettings", {
+                    eventLocation : props.defaultValue.eventLocation ? props.defaultValue.eventLocation : "",
+                    eventLink: props.defaultValue.eventLink ? props.defaultValue.eventLink : "",
+                    eventPrice: props.defaultValue.eventPrice ? props.defaultValue.eventPrice : "",
+                }))
                 break;
             }
             default: return;
         }
         this.autoSave = this.autoSave.bind(this);
         this.autoSave();
-    }
-
-    componentDidMount() {
-        const { inputType, dispatch, initialValue } = this.props;
-
-        if (inputType !== undefined && initialValue !== undefined){
-            dispatch(Redactor.addTempData(inputType, initialValue));
-        }
-        switch (inputType) {
-            default:
-                return;
-        }
     }
 
     autoSave(){
@@ -108,6 +101,7 @@ class InputsBox extends React.Component{
                 <React.Fragment key={index}>
                     <Input
                         my={"10px"}
+                        value={this.state[item.type]}
                         sx={{outline: theme.text.primary, color: theme.text.primary, borderRadius: "4px"}}
                         onChange={(e) => this.setState({[item.type]: e.target.value, in_save: true})}
                         type={item.type}
@@ -129,7 +123,8 @@ InputsBox.propTypes ={
     inputType: PropTypes.oneOf([
         "newUser",
         "eventSettings"
-    ]).isRequired
+    ]).isRequired,
+    defaultValue: PropTypes.any
 }
 
 export default connect(mapStateToProps)(withTheme(InputsBox));

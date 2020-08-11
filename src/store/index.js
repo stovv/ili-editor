@@ -25,8 +25,7 @@ const store = createStore(
 store.subscribe(
     throttle(() => {
         saveState({
-            auth: store.getState().auth,
-            redactor: store.getState().redactor,
+            auth: store.getState().auth
         });
     }, 1000)
 );
