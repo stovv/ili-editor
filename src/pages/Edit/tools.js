@@ -87,7 +87,26 @@ export default {
                 instagram: true,
                 "yandex-music-playlist": true,
                 "yandex-music-album": true,
-                "yandex-music-track": true,
+                "yandex-music-track-new": {
+                    regex: /https?:\/\/music\.yandex\.ru\/album\/([0-9]*)\/track\/([0-9]*)/,
+                    embedUrl: "https://music.yandex.ru/iframe/#track/<%= remote_id %>/",
+                    html: '<iframe frameborder="0" style="border:none;width:540px;height:100px;" style="width:100%;" height="100"></iframe>',
+                    height: 100,
+                    width: 540,
+                    id: function (e) {
+                        return e.reverse().join("/")
+                    }
+                },
+                soundcloud: {
+                    regex: /https:\/\/soundcloud\.com\/([\w0-9-_]*)\/([\w-_0-9]*)/,
+                    embedUrl: "https://w.soundcloud.com/player/?url=https://soundcloud.com/<%= remote_id %>&amp;auto_play=false&amp;buying=true&amp;liking=true&amp;download=true&amp;sharing=true&amp;show_artwork=true&amp;show_comments=true&amp;show_playcount=true&amp;show_user=true&amp;hide_related=false&amp;visual=true&amp;start_track=0&amp;callback=true",
+                    html: '<iframe className="iframe" width="100%" height="465" scrolling="no" frameBorder="no" ></iframe>',
+                    height: 465,
+                    width: 540,
+                    id: function (e) {
+                        return e.join("/")
+                    }
+                },
                 twitter: true,
                 vine: true,
                 vimeo: true,
