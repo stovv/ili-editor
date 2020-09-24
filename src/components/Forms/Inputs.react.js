@@ -48,7 +48,7 @@ const Label = styled.span`
     font-size: ${props=> props.theme.fontSizes[1]};
     font-weight: normal;
     font-stretch: normal;
-    font-style: normal;s
+    font-style: normal;
     line-height: 1.32;
     letter-spacing: normal;
 `;

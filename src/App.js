@@ -1,9 +1,8 @@
 import React from 'react';
-import {connect} from "react-redux";
+import { connect } from "react-redux";
 import {BrowserRouter as Router,
     Switch,
-    Route,
-    withRouter
+    Route
 } from "react-router-dom";
 
 import { registerPlugin } from 'react-filepond';
@@ -17,6 +16,7 @@ import {
     NotFoundPage
 } from './pages';
 
+import IsLogged from './api/methods/auth.react';
 import { Mapping } from './mapping';
 import IliThemeProvider from "./theme";
 
@@ -33,39 +33,39 @@ import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css';
 registerPlugin(FilePondPluginImageExifOrientation, FilePondPluginImagePreview);
 
 class App extends React.Component {
+    render() {
+        const { userType } = this.props;
 
-  render() {
-    const { userType } = this.props;
+        return (
+            <Router>
+                <IsLogged/>
+                <Switch>
+                    {
+                        Object.keys(Mapping).map((key, index) => {
 
-    return (
-        <Router>
-            <Switch>
-                {
-                    Object.keys(Mapping).map((key, index) => {
+                            const Component = Mapping[key].page;
 
-                        const Component = Mapping[key].page;
-
-                        if ( Mapping[key].userType !== undefined && userType !== Mapping[key].userType ){
-                            return <Route exact path={key} component={NotFoundPage}/>
-                        }
-                        if ( Mapping[key].authRequired ){
-                            return <PrivateRoute exact path={key} component={() => <IliThemeProvider><SideContainer
-                                mapping={Mapping}><Component/></SideContainer></IliThemeProvider>}/>
-                        } else{
-                            return <Route exact path={key} component={() =>
-                                <IliThemeProvider><SideContainer
-                                    mapping={Mapping}><Component/></SideContainer></IliThemeProvider>}/>;
-                        }
-                    })
-                }
-                <PrivateRoute path={'/edit/draft/:id'} component={EditPage}/>
-                <PrivateRoute path={`/moderate/draft/:id`} component={EditPage}/>
-                <PrivateRoute path={`/edit/post/:id`} component={EditPage}/>
-                <Route component={NotFoundPage}/>
-            </Switch>
-        </Router>
-    );
-  }
+                            if ( Mapping[key].userType !== undefined && userType !== Mapping[key].userType ){
+                                return <Route exact path={key} component={NotFoundPage}/>
+                            }
+                            if ( Mapping[key].authRequired ){
+                                return <PrivateRoute exact path={key} component={() => <IliThemeProvider><SideContainer
+                                    mapping={Mapping}><Component/></SideContainer></IliThemeProvider>}/>
+                            } else{
+                                return <Route exact path={key} component={() =>
+                                    <IliThemeProvider><SideContainer
+                                        mapping={Mapping}><Component/></SideContainer></IliThemeProvider>}/>;
+                            }
+                        })
+                    }
+                    <PrivateRoute path={'/edit/draft/:id'} component={EditPage}/>
+                    <PrivateRoute path={`/moderate/draft/:id`} component={EditPage}/>
+                    <PrivateRoute path={`/edit/post/:id`} component={EditPage}/>
+                    <Route component={NotFoundPage}/>
+                </Switch>
+            </Router>
+        );
+    }
 }
 
 function mapStateToProps(state){

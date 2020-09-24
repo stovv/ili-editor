@@ -1,4 +1,10 @@
+import React from "react";
+import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
+
 import api, { getJwt } from "../connector.react";
+import { Auth as AuthActions } from "../../actions";
+
 
 export async function login(user, password){
     return api.post('/auth/local', {
@@ -40,3 +46,24 @@ export async function get_users(){
         headers: { 'Authorization': `Bearer ${jwt}`}
     });
 }
+
+class IsLogged extends React.Component{
+
+    componentDidMount() {
+        const { dispatch, history } = this.props;
+        const jwt = getJwt();
+        api.get('/users/me', {headers: {'Authorization': `Bearer ${jwt}`}})
+            .then(response => console.log("Yeah! You already logged!"))
+            .catch(reason => {
+                console.log("Something wrong with your jwt or backend -> ", reason);
+                dispatch(AuthActions.logout());
+                history.push('/login');
+            });
+    }
+
+    render() {
+        return null;
+    }
+}
+
+export default connect()(withRouter(IsLogged));
