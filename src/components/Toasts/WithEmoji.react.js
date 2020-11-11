@@ -2,7 +2,6 @@ import React from 'react';
 import styled from 'styled-components';
 
 import { Small } from '../Typography.react';
-import IliThemeProvider from "../../theme";
 
 const Container = styled.div`
     background-color: ${props => props.color};

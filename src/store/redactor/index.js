@@ -35,13 +35,19 @@ function RedactorReducer(state = initialState, action){
         case POSTS.GET_MY:{
           return  {
               ...state,
-              published: action.payload
+              published: [
+                  ...state.published,
+                  ...action.payload
+              ]
           };
         }
         case POSTS.GET_ALL:{
             return {
                 ...state,
-                posts: action.payload
+                posts: [
+                    ...state.posts,
+                    ...action.payload
+                ]
             }
         }
         case DRAFT.OPEN:{

@@ -17,7 +17,7 @@ import IliThemeProvider from "../../theme";
 import { RedactorTypogrphy } from './styles';
 import { getJwt } from "../../api/connector.react";
 import { BACKEND_URL, FilePondLocalization } from "../../constants";
-import { Headers, Loader, Typography, PopUp, Buttons, Toasts, ListBox, Forms, InputsBox } from '../../components';
+import { Headers, Loaders, Typography, PopUp, Buttons, Toasts, ListBox, Forms, InputsBox } from '../../components';
 
 
 class EditPage extends React.Component{
@@ -226,7 +226,7 @@ class EditPage extends React.Component{
         const { blocks } = this.props.draft;
 
         if ( loading ){
-            return <IliThemeProvider><Loader/></IliThemeProvider>
+            return <Loaders.Text/>
         }
 
         const alreadyAuthorsExists = !(tmpAuthors !== undefined && tmpAuthors.length === 0);

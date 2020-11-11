@@ -55,6 +55,7 @@ class IsLogged extends React.Component{
         api.get('/users/me', {headers: {'Authorization': `Bearer ${jwt}`}})
             .then(response => console.log("Yeah! You already logged!"))
             .catch(reason => {
+                console.log(reason)
                 console.log("Something wrong with your jwt or backend -> ", reason);
                 dispatch(AuthActions.logout());
                 history.push('/login');

@@ -102,9 +102,9 @@ export function getDraftsOnModeration(){
     };
 }
 
-export function getAllPosts(start, limit){
-    return async dispatch => {
-        await Redactor.getAllPosts(start, limit)
+export function getAllPosts(limit){
+    return async (dispatch, getState) => {
+        await Redactor.getAllPosts(getState().redactor.posts.length, limit)
             .then(response=>{
                 dispatch(getAllPostsAction(response.data.posts));
             })
@@ -138,15 +138,15 @@ export function getUsers(skipIds){
     };
 }
 
-export function getPublishedPosts(user_id, start, limit){
-    return async dispatch => {
-        await Redactor.getMyPosts(user_id, start, limit)
+export function getPublishedPosts(user_id, limit, sort = "desc"){
+
+    return async (dispatch, getState) => {
+        await Redactor.getMyPosts(user_id, getState().redactor.published.length, limit, sort)
             .then(response=>{
-                dispatch(getPublishedAction(response.data.posts));
-            })
-            .catch(reason=>{
-                console.log(reason);
-            })
+                if (response.data.posts && response.data.posts.length > 0){
+                    dispatch(getPublishedAction(response.data.posts));
+                }
+            });
     };
 }
 

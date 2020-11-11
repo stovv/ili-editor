@@ -1,18 +1,24 @@
 import React from "react";
 import {Flex, Box } from 'rebass';
 import { connect } from "react-redux";
+import { withRouter } from "react-router";
+import { Offline } from "react-detect-offline";
 import { withTheme } from "styled-components";
 
 import { Logo } from "../../assets";
 import {Redactor} from "../../actions";
 import { XSmall } from "../Typography.react";
 import SimpleButton from "../Buttons/Simple.react";
-import { Separator, Avatar } from "../Common.react";
-import {BACKEND_URL, EmptyCover} from "../../constants";
+import { BACKEND_URL, EmptyCover } from "../../constants";
+import { Separator, Avatar, OfflineModLabel } from "../Common.react";
+import ArrowLeft from "../../assets/arrow_left";
 
 
-const RedactorLogo=({theme, typeHeader})=>(
+const RedactorLogo=({theme, typeHeader, goBack = ()=>null})=>(
     <Flex justifyContent="center" my={"auto"}>
+        <Box my={"auto"} mr={"10px"} onClick={goBack} sx={{cursor: "pointer"}}>
+            <ArrowLeft/>
+        </Box>
         <Box my={"auto"} width={"50px"} height={"50px"}>
             <Logo width="100%" primary={theme.colors.primary}
                   background={theme.colors.secondary}/>
@@ -29,6 +35,9 @@ const RedactorLogo=({theme, typeHeader})=>(
                         : "Черновик"
                 )
         }</XSmall>
+        <Offline>
+            <OfflineModLabel ml={"10px"}/>
+        </Offline>
     </Flex>
 );
 
@@ -64,7 +73,7 @@ class EditorHeader extends React.Component {
                   mx={"auto"} maxWidth={"1000px"} px={"20px"}>
                 <Box my={"auto"}>
                     <Flex>
-                        <RedactorLogo theme={theme} typeHeader={typeHeader}/>
+                        <RedactorLogo theme={theme} typeHeader={typeHeader} goBack={this.props.history.goBack}/>
                     </Flex>
                 </Box>
                 <Box my={"auto"}>
@@ -112,4 +121,4 @@ function mapStateToProps(state) {
     }
 }
 
-export default connect(mapStateToProps)(withTheme(EditorHeader));
+export default connect(mapStateToProps)(withTheme(withRouter(EditorHeader)));

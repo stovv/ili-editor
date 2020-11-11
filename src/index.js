@@ -5,10 +5,13 @@ import * as serviceWorker from './serviceWorker';
 
 import App from './App';
 import store from './store';
+import IliThemeProvider from "./theme";
 
 ReactDOM.render(
   <Provider store={store}>
-      <App />
+      <IliThemeProvider>
+        <App />
+      </IliThemeProvider>
   </Provider>,
   document.getElementById('root')
 );

@@ -5,12 +5,13 @@ import { connect } from "react-redux";
 import { FiPlus } from "react-icons/fi";
 import { withTheme } from "styled-components";
 import { withRouter } from "react-router-dom";
+import { Offline } from "react-detect-offline";
 
 import { Typography } from '../index';
 import { Hamburger } from "../../assets";
 import { IconContext } from "react-icons";
 import { Redactor } from "../../actions";
-import { Separator, Avatar } from "../Common.react";
+import {Separator, Avatar, OfflineModLabel} from "../Common.react";
 import {BACKEND_URL, EmptyCover} from "../../constants";
 
 
@@ -34,6 +35,9 @@ class SimpleHeader extends React.Component {
                                 : <Typography.Normal weight={600} margin="0 0 0 20px" color={theme.text.editorSecondary}>{title}</Typography.Normal>
 
                         }
+                        <Offline>
+                            <OfflineModLabel ml={"10px"}/>
+                        </Offline>
                     </Flex>
                 </Box>
                 <Box my={"auto"}>

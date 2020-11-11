@@ -1,24 +1,14 @@
 import React from 'react';
 import { connect } from "react-redux";
-import {BrowserRouter as Router,
-    Switch,
-    Route
-} from "react-router-dom";
-
 import { registerPlugin } from 'react-filepond';
-import {
-    PrivateRoute,
-    SideContainer
-} from "./components";
+import { Online } from "react-detect-offline";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 
-import {
-    EditPage,
-    NotFoundPage
-} from './pages';
-
-import IsLogged from './api/methods/auth.react';
 import { Mapping } from './mapping';
 import IliThemeProvider from "./theme";
+import IsLogged from './api/methods/auth.react';
+import { EditPage, NotFoundPage } from './pages';
+import { PrivateRoute, SideContainer} from "./components";
 
 import './App.css';
 import 'moment/locale/ru';
@@ -29,6 +19,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import FilePondPluginImageExifOrientation from 'filepond-plugin-image-exif-orientation';
 import FilePondPluginImagePreview from 'filepond-plugin-image-preview';
 import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css';
+import PublicationsPage from "./pages/PublicationsPage.react";
 
 registerPlugin(FilePondPluginImageExifOrientation, FilePondPluginImagePreview);
 
@@ -38,7 +29,7 @@ class App extends React.Component {
 
         return (
             <Router>
-                <IsLogged/>
+                <Online><IsLogged/></Online>
                 <Switch>
                     {
                         Object.keys(Mapping).map((key, index) => {
@@ -49,12 +40,14 @@ class App extends React.Component {
                                 return <Route exact path={key} component={NotFoundPage}/>
                             }
                             if ( Mapping[key].authRequired ){
-                                return <PrivateRoute exact path={key} component={() => <IliThemeProvider><SideContainer
-                                    mapping={Mapping}><Component/></SideContainer></IliThemeProvider>}/>
+                                return <PrivateRoute exact withSide path={key} component={Component}/>
                             } else{
-                                return <Route exact path={key} component={() =>
-                                    <IliThemeProvider><SideContainer
-                                        mapping={Mapping}><Component/></SideContainer></IliThemeProvider>}/>;
+                                return <Route exact path={key}
+                                              render={() =>
+                                                  <SideContainer mapping={Mapping}>
+                                                    <Component/>
+                                                  </SideContainer>
+                                              }/>
                             }
                         })
                     }

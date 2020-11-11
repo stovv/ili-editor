@@ -52,10 +52,10 @@ export async function getModerationDrafts(){
     });
 }
 
-export async function getMyPosts(user_id, start, limit){
+export async function getMyPosts(user_id, start, limit, sort= "desc"){
     return api.ql(`
     query{
-      posts( where: { authors: { id: ${user_id} } }, start: ${start}, limit: ${limit} ){
+      posts( where: { authors: ${user_id} }, start: ${start}, limit: ${limit}, sort: "publish_at:${sort}" ){
         id,
         title,
         slug,
@@ -77,6 +77,10 @@ export async function getMyPosts(user_id, start, limit){
       }
     }
     `);
+}
+
+export async function getPostsCount(user_id= null){
+    return api.get(`/posts/count/${user_id !== null ? `?authors=${user_id}`: ""}`)
 }
 
 export async function getScheduledPosts(){

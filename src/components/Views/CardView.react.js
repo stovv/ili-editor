@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { Flex, Box } from 'rebass';
 import { withTheme } from "styled-components";
+import InfiniteScroll from "react-infinite-scroll-component";
 
-import { DraftCard, Typography, Loader } from '../../components';
+import { DraftCard, Typography, Loaders } from '../../components';
 
 
 class CardsView extends React.Component{
@@ -11,10 +12,12 @@ class CardsView extends React.Component{
     constructor(props) {
         super(props);
         this.orderLines = this.orderLines.bind(this);
+        this.fetchMoreBlocks = this.fetchMoreBlocks.bind(this);
         this.handleWindowResize = this.handleWindowResize.bind(this);
         this.state = {
             cards: null,
-            width: window.innerWidth,
+            hasMore: true,
+            width: window.innerWidth
         }
     }
 
@@ -35,11 +38,11 @@ class CardsView extends React.Component{
             for (let i = 0; i < drafts.length; i+= sepCount) {
                 items.push(
                     <React.Fragment key={i}>
-                        <Flex mb={theme.spacing.block}>
+                        <Flex my={theme.spacing.block}>
                             {
                                 drafts.slice(i, i + sepCount).map((item, index)=>
                                     <React.Fragment key={index}>
-                                        <Box width={1/sepCount} height="250px" >
+                                        <Box width={1/sepCount} height="300px" >
                                             <DraftCard draft={item} linkPrefix={prefix} {...rest}/>
                                         </Box>
                                     </React.Fragment>
@@ -51,7 +54,7 @@ class CardsView extends React.Component{
             }
         }else{
             items = drafts.map((item, index) => <React.Fragment key={index}>
-                <Box width={"100%"} px={"5px"} mx="auto" mb={theme.spacing.block} height="250px">
+                <Box width={"100%"} px={"5px"} mx="auto" mb={theme.spacing.block} height="300px">
                     <DraftCard draft={item} linkPrefix={prefix} {...rest}/>
                 </Box>
             </React.Fragment>)
@@ -80,26 +83,40 @@ class CardsView extends React.Component{
         window.removeEventListener('resize', this.handleWindowResize);
     }
 
+    fetchMoreBlocks (){
+        const { fetchMore = () => null } = this.props;
+        const hasMore = fetchMore();
+        this.setState({hasMore});
+    }
+
     render(){
-        const { theme, drafts, emptyMessage } = this.props;
-        const { cards } = this.state;
+        const { theme, drafts, emptyMessage, hasMore: globHasMore } = this.props;
+        const { cards, hasMore = true } = this.state;
         const { AnimateGroup } = require('react-animation');
 
         if ( cards === null || drafts == null ){
-            return (<Loader/>);
+            return (<Loaders.Text/>);
         }
-        // TODO: infinity scroll
 
         return (
-            <Box>
-                {
-                    drafts.length > 0
-                        ? <AnimateGroup durationOut={1000} animationIn={"bounceIn"} animationOut="fadeOut">{cards}</AnimateGroup>
-                        : <Typography.XXLarge margin="50px auto" textAlign="center" width="100%" color={theme.text.editorSecondary}>
-                            { emptyMessage !== undefined ? emptyMessage : "Пока тут пусто" }
-                        </Typography.XXLarge>
-                }
-            </Box>
+            <>{
+                drafts.length > 0
+                    ?<>
+                        <AnimateGroup durationOut={1000} animationIn={"bounceIn"} animationOut="fadeOut">
+                            <InfiniteScroll dataLength={cards.length} next={this.fetchMoreBlocks}
+                                            hasMore={globHasMore && hasMore}
+                                            loader={<Loaders.Infinity done={!hasMore}/>}>
+                                {cards}
+                            </InfiniteScroll>
+                        </AnimateGroup>
+                        {
+                            !hasMore && <Loaders.Infinity done={!hasMore}/>
+                        }
+                    </>
+                    : <Typography.XXLarge margin="50px auto" textAlign="center" width="100%" color={theme.text.editorSecondary}>
+                        { emptyMessage !== undefined ? emptyMessage : "Пока тут пусто" }
+                    </Typography.XXLarge>
+            }</>
         );
     }
 }
@@ -107,6 +124,8 @@ class CardsView extends React.Component{
 CardsView.propTypes ={
     prefix: PropTypes.string.isRequired,
     drafts: PropTypes.array.isRequired,
+    fetchMore: PropTypes.func,
+    hasMore: PropTypes.bool,
     emptyMessage: PropTypes.string,
     skipState: PropTypes.bool,
     externalLink: PropTypes.bool,

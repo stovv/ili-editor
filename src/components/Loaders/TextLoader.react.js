@@ -3,10 +3,10 @@ import Typist from 'react-typist';
 import { Box } from 'rebass';
 import { withTheme } from "styled-components";
 
-import { Typography } from "./index";
+import { Typography } from "../index";
 
 
-const Loader =({theme}) => (
+const TextLoader =({theme}) => (
     <Box sx={{transform: 'translate(-50%, -50%)', top: "50%", left: "50%", position: 'absolute'}}>
         <Typography.XLarge margin="50px auto" textAlign="center" width="100%" color={theme.text.editorSecondary}>
             <Typist avgTypingDelay={100} stdTypingDelay={50}>
@@ -40,4 +40,4 @@ const Loader =({theme}) => (
     </Box>
 );
 
-export default withTheme(Loader);
+export default withTheme(TextLoader);

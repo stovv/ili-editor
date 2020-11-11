@@ -1,5 +1,4 @@
 import PopUp from "./Popup.react";
-import Loader from './Loader.react';
 import ListBox from "./ListBox.react";
 import InputsBox from "./InputsBox.react";
 import DraftCard from "./DraftCard.react";
@@ -12,6 +11,7 @@ import * as Forms from './Forms';
 import * as Views from './Views';
 import * as Images from './Images';
 import * as Toasts from './Toasts';
+import * as Loaders from "./Loaders";
 import * as Headers from './Headers';
 import * as Buttons from './Buttons';
 import * as EditorTools from './Editor';
@@ -25,7 +25,7 @@ export {
     Header,
     Common,
     Images,
-    Loader,
+    Loaders,
     Toasts,
     Views,
     ListBox,

@@ -3,32 +3,10 @@ import { lightTheme, darkTheme } from "./theme.js";
 import {ThemeProvider} from 'styled-components';
 import {connect} from 'react-redux';
 
-class IliThemeProvider extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            mounted : false
-        };
-    }
-
-    componentDidMount() {
-        this.setState({ mounted: true });
-    }
-
-    render() {
-        const theme = this.props.mode === 'dark' ? darkTheme : lightTheme;
-        const body = (
-            <ThemeProvider theme={theme}>{this.props.children}</ThemeProvider>
-        );
-
-        // prevents ssr flash for mismatched dark mode
-        if (!this.state.mounted) {
-            return <div style={{ visibility: "hidden" }}>{body}</div>;
-        }
-
-        return body;
-    }
-}
+const IliThemeProvider = ({mode, children}) => {
+    const theme = mode === 'dark' ? darkTheme : lightTheme;
+    return <ThemeProvider theme={theme}>{children}</ThemeProvider>;
+};
 
 function mapStateToProps(state) {
     return{

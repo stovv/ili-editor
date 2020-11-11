@@ -146,7 +146,7 @@ class DraftCard extends React.Component {
                                 </LinkComp>
                                 : <Lazy cover={cover || EmptyCover}/>
                         }
-                        <Box height={"max-content"} width="100%" bg={theme.colors.backgroundPrimary} p={"10px"} sx={{
+                        <Box height={"max-content"} width="100%" bg={theme.colors.backgroundPrimary} p={"10px 10px 0 10px"} sx={{
                             position: 'absolute', bottom: 0, left: 0
                         }}>
                             {

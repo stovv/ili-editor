@@ -18,7 +18,7 @@ class PopUp extends React.Component{
         return (
             <Modal open={pid === openedId} onClose={()=>{
                 dispatch(Redactor.closePopUp());
-            }}>
+            }} center styles={{modal: {borderRadius: "16px"}}}>
                 <Box minWidth={"600px"}>
                     <Normal>{title}</Normal>
                     {children}

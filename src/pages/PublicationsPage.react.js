@@ -3,24 +3,39 @@ import { connect } from "react-redux";
 
 import { Redactor } from '../actions';
 import { Views } from '../components';
+import { Redactor as RedactorAPI } from "../api";
 
 
 class PublicationsPage extends React.Component{
-
-    constructor(props) {
-        super(props);
+    state = {
+        postsCount: 0
     }
-
     componentDidMount() {
-        const { userId, dispatch } = this.props;
-        dispatch(Redactor.getPublishedPosts(userId, 0, 10));
+        const { dispatch, userId } = this.props;
+        RedactorAPI.getPostsCount(userId)
+            .then(response => {
+                this.setState({
+                    postsCount: response.data
+                })
+            })
+            .catch(reason=>{
+
+            });
+        dispatch(Redactor.getPublishedPosts(userId, 10));
     }
 
     render(){
-        const { published } = this.props;
-
+        const { userId, published = []} = this.props;
+        const { postsCount } = this.state;
         return (
-            <Views.CardsView prefix="https://dev.ili-nnov.ru/" slug externalLink drafts={published} emptyMessage={'Пока нет ни одной публикации'}/>
+            <Views.CardsView prefix="https://dev.ili-nnov.ru/" slug externalLink
+                             drafts={published} emptyMessage={'Пока нет ни одной публикации'}
+                             hasMore={postsCount > 0}
+                             fetchMore={() => {
+                                 this.props.dispatch(Redactor.getPublishedPosts(userId, 10));
+                                 return postsCount > this.props.published.length;
+                             }}
+            />
         );
     }
 }
