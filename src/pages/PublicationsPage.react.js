@@ -28,7 +28,7 @@ class PublicationsPage extends React.Component{
         const { userId, published = []} = this.props;
         const { postsCount } = this.state;
         return (
-            <Views.CardsView prefix="https://dev.ili-nnov.ru/" slug externalLink
+            <Views.CardsView prefix="https://ili-nnov.ru/" slug externalLink
                              drafts={published} emptyMessage={'Пока нет ни одной публикации'}
                              hasMore={postsCount > 0}
                              fetchMore={() => {
