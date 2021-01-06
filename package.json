@@ -21,7 +21,7 @@
     "@editorjs/table": "^1.2.2",
     "@editorjs/warning": "^1.1.1",
     "@rebass/forms": "^4.0.6",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "editorjs-inline-tool": "^0.3.0",
     "filepond": "^4.19.2",
     "filepond-plugin-image-exif-orientation": "^1.0.9",
